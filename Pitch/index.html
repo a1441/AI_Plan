@@ -13,99 +13,58 @@
   <!-- SECTION 1: INTRO -->
   <section id="intro" class="section-intro">
     <div class="intro-inner">
-      <p class="intro-eyebrow">AI Game Engine</p>
-      <h1 class="intro-title">
-        Building Complete Games<br />
-        with an AI Framework
-      </h1>
-      <p class="intro-sub">
-        A pipeline of specialized agents that collaborates to generate,<br />
-        balance, test, and ship mobile games — from a single prompt.
-      </p>
+      <h1 class="intro-title">Building Complete Games with an AI Framework</h1>
     </div>
   </section>
 
-  <!-- SECTION 2: PROCESS DIAGRAM -->
+  <!-- SECTION 2: STEP 1 — CORE LOOP -->
   <section id="process" class="section-process">
+    <div class="step1-header">
+      <span class="step1-tag">Step 1</span>
+      <h2 class="step1-title">Core Loop</h2>
+    </div>
     <div class="process-inner">
       <div class="process-step" data-step="1">
         <div class="process-icon">✦</div>
         <div class="process-label">Prompt</div>
-        <div class="process-desc">One sentence. The idea.</div>
       </div>
       <div class="process-arrow">→</div>
       <div class="process-step" data-step="2">
         <div class="process-icon">⬡</div>
         <div class="process-label">Web Prototype</div>
-        <div class="process-desc">AI builds a playable HTML version</div>
       </div>
       <div class="process-arrow">→</div>
       <div class="process-step" data-step="3">
-        <div class="process-icon">▷</div>
-        <div class="process-label">Playtest</div>
-        <div class="process-desc">Verify the core loop is fun</div>
+        <div class="process-icon">◎</div>
+        <div class="process-label">Refinement</div>
       </div>
       <div class="process-arrow">→</div>
       <div class="process-step" data-step="4">
-        <div class="process-icon">◈</div>
-        <div class="process-label">Engine</div>
-        <div class="process-desc">Translated into a game engine</div>
+        <div class="process-icon">▷</div>
+        <div class="process-label">Play Test</div>
       </div>
       <div class="process-arrow">→</div>
       <div class="process-step" data-step="5">
-        <div class="process-icon">⬆</div>
-        <div class="process-label">Ship</div>
-        <div class="process-desc">Export iOS &amp; Android apps</div>
+        <div class="process-icon">◼</div>
+        <div class="process-label">Lock In</div>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 3: GAME SELECTOR -->
-  <section id="game-selector" class="section-selector">
-    <div class="selector-header">
-      <p class="selector-label">Start with a prompt</p>
-      <h2 class="selector-title">Choose a Core Game Loop</h2>
+  <!-- SECTION 3: TETRIS DEMO -->
+  <section id="tetris-demo" class="section-tetris">
+    <div class="tetris-prompt-col">
+      <div class="tetris-prompt-label">Example Prompt</div>
+      <p class="tetris-prompt-text">Classic Tetris. Tetrominoes fall from the top. Player rotates and positions pieces to complete horizontal rows. Completed rows explode and score increases. Speed increases every 10 lines.</p>
     </div>
-
-    <div class="selector-cards" id="selector-cards">
-      <div class="prompt-card" data-game="metro" tabindex="0" role="button" aria-label="Select Metro Runner">
-        <div class="prompt-card-tag">Endless Runner</div>
-        <div class="prompt-card-name">Metro Runner</div>
-        <div class="prompt-card-text">An endless runner set in a neon-lit underground metro. Player swipes left/right to switch between 3 lanes, ducks under low-ceiling trains, jumps gaps…</div>
-        <div class="prompt-card-cta">Select →</div>
-      </div>
-      <div class="prompt-card" data-game="poker" tabindex="0" role="button" aria-label="Select Poker Sort">
-        <div class="prompt-card-tag">Card Puzzle</div>
-        <div class="prompt-card-name">Poker Sort</div>
-        <div class="prompt-card-text">Cards flow from a central river into 4 sorting piles. Build the highest-ranked poker hand in each pile before the river overflows…</div>
-        <div class="prompt-card-cta">Select →</div>
-      </div>
-      <div class="prompt-card" data-game="vowel" tabindex="0" role="button" aria-label="Select Vowel Colour">
-        <div class="prompt-card-tag">Word Puzzle</div>
-        <div class="prompt-card-name">Vowel Colour</div>
-        <div class="prompt-card-text">A grid of letter tiles where vowels pulse with distinct colors. Tap sequences to spell words — vowels must match the color pattern shown…</div>
-        <div class="prompt-card-cta">Select →</div>
-      </div>
-    </div>
-
-    <div class="selector-dots" id="selector-dots">
-      <button class="selector-dot" data-game="metro" aria-label="Metro Runner"></button>
-      <button class="selector-dot" data-game="poker" aria-label="Poker Sort"></button>
-      <button class="selector-dot" data-game="vowel" aria-label="Vowel Colour"></button>
-    </div>
-
-    <div class="game-reveal" id="game-reveal" aria-hidden="true">
-      <div class="game-reveal-left">
-        <div class="game-reveal-prompt-label">Full Prompt</div>
-        <div class="game-reveal-prompt-text" id="reveal-prompt-text"></div>
-      </div>
-      <div class="game-reveal-right">
-        <div class="iphone-frame">
-          <div class="iphone-notch"></div>
-          <div class="iphone-screen" id="reveal-screen"></div>
+    <div class="tetris-phone-col">
+      <div class="iphone-frame">
+        <div class="iphone-notch"></div>
+        <div class="iphone-screen" id="tetris-screen">
+          <div class="tet-game" id="tetris-game"></div>
         </div>
-        <p class="reveal-caption">Raw core mechanic — no UI, no shell</p>
       </div>
+      <p class="reveal-caption">Core mechanic — generated from prompt</p>
     </div>
   </section>
 
@@ -117,7 +76,7 @@
           <div class="iphone-notch"></div>
           <div class="iphone-screen" id="build-screen">
             <div class="build-screen-placeholder">
-              <span>← Select a game above</span>
+              <span>Scroll up to see the core loop</span>
             </div>
           </div>
         </div>
