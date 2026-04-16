@@ -99,8 +99,8 @@ body.page-root[data-scroll-stage="3"] {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  flex-wrap: wrap;
-  max-width: 940px;
+  flex-wrap: nowrap;
+  max-width: 960px;
   width: 100%;
 }
 
@@ -109,8 +109,9 @@ body.page-root[data-scroll-stage="3"] {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 1.2rem 1rem;
-  min-width: 130px;
+  padding: 1.2rem 0.6rem;
+  min-width: 0;
+  flex: 1;
   opacity: 0;
   transform: translateY(14px);
   transition: opacity 0.45s ease, transform 0.45s ease;
@@ -145,10 +146,11 @@ body.page-root[data-scroll-stage="3"] {
 }
 
 .process-arrow {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   opacity: 0.25;
-  padding: 0 0.4rem;
+  padding: 0 0.2rem;
   margin-top: 1.2rem;
+  flex-shrink: 0;
   color: inherit;
 }
 
