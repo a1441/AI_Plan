@@ -1,308 +1,325 @@
-// ========================================
-// COMPONENT DATA
-// ========================================
+// ============================================================
+// AI GAME ENGINE — PITCH PAGE
+// ============================================================
 
-const componentData = {
-  ui: {
-    title: 'UI Shell',
-    layer: 'Layer 1 \u2014 Foundation',
-    layerClass: 'layer-1-bg',
-    desc: 'The standardized UI frame wrapping every game. Screens, navigation, theming, currency bar, shop \u2014 structurally identical across all games, themed per title.',
-    does: [
-      'Generates all screens: splash, main menu, shop, settings, leaderboard',
-      'Builds the navigation graph (which screens connect to which)',
-      'Creates the FTUE onboarding flow with progressive disclosure',
-      'Applies theme: color palette, typography, animations',
-      'Defines slot positions where other verticals plug in'
-    ],
-    output: 'ShellConfig \u2014 8 screens, nav graph,\ncurrency bar (coins + gems),\n3 ad slot positions,\nneon cyberpunk theme'
+// ── Game Data ────────────────────────────────────────────────
+const GAMES = {
+  metro: {
+    id: 'metro',
+    prompt: 'An endless runner set in a neon-lit underground metro. Player swipes left/right to switch between 3 lanes, ducks under low-ceiling trains, and jumps gaps between platforms. Speed increases every 30 seconds. Miss three obstacles and the run ends.',
   },
-  mechanics: {
-    title: 'Core Mechanics',
-    layer: 'Layer 1 \u2014 Foundation',
-    layerClass: 'layer-1-bg',
-    desc: 'The gameplay itself. A runner, puzzle, RPG, or any genre \u2014 each implements the same interface but delivers a different experience inside the shell.',
-    does: [
-      'Generates the core gameplay loop (run, match, fight, choose)',
-      'Defines scoring formula and reward events',
-      'Lists adjustable parameters (speed, difficulty, coin density)',
-      'Specifies the input model (tap, swipe, drag)',
-      'Implements the IMechanic slot interface'
-    ],
-    output: 'MechanicConfig \u2014 endless_runner,\nswipe input, distance scoring,\n4 tunable params: speed,\nobstacleRate, coinDensity, powerupChance'
+  poker: {
+    id: 'poker',
+    prompt: 'Cards flow from a central river into 4 sorting piles. Player must build the highest-ranked poker hand in each pile before the river overflows. Tap a card to lock its pile target. Combos of matching suits clear a full pile instantly.',
   },
-  assets: {
-    title: 'Assets',
-    layer: 'Layer 1 \u2014 Foundation',
-    layerClass: 'layer-1-bg',
-    desc: 'Art, audio, and animation sourced via AI generation, marketplace purchase, or artist commission. Builds a reusable collateral library across games.',
-    does: [
-      'Sources assets through 3 channels: AI-generated, purchased, commissioned',
-      'Ensures style consistency across all assets per game',
-      'Manages asset library for reuse across titles',
-      'Validates performance budgets (file size, memory)',
-      'Provides fallbacks for every critical asset'
-    ],
-    output: 'AssetManifest \u2014 6 characters,\n3 environments, 15 obstacles,\n8 powerups, UI icons,\n3 music tracks (120 BPM)'
+  vowel: {
+    id: 'vowel',
+    prompt: 'A grid of letter tiles where vowels pulse with distinct colors. Player taps tile sequences to spell words — vowels must match the color pattern shown on the target. Clearing a board before the timer unlocks the next phonetic puzzle set.',
   },
-  economy: {
-    title: 'Economy',
-    layer: 'Layer 2 \u2014 Balance',
-    layerClass: 'layer-2-bg',
-    desc: 'Currencies, rewards, time-gates, and sinks. Controls how fast players earn, what things cost, and how long progression takes \u2014 the engine of engagement and revenue.',
-    does: [
-      'Defines currency types (basic coins, premium gems)',
-      'Sets earn rates per activity and difficulty tier',
-      'Configures time-gates (energy, cooldowns)',
-      'Balances faucets (income) vs sinks (spending)',
-      'Segments economy per player type (whale, casual, new)'
-    ],
-    output: 'EconomyTable \u2014 50 coins/easy run,\n500 coins/hard run, skins 500-5000,\nenergy: 5 lives, regen 20min,\npremium: 100 gems = $0.99'
-  },
-  difficulty: {
-    title: 'Difficulty',
-    layer: 'Layer 2 \u2014 Balance',
-    layerClass: 'layer-2-bg',
-    desc: 'Level generation and difficulty curves. Controls how hard the game gets over time \u2014 with rest points, spikes, and reward tier mapping.',
-    does: [
-      'Generates per-level difficulty parameters',
-      'Creates difficulty curves (gradual, sawtooth, plateau)',
-      'Maps difficulty scores to reward tiers',
-      'Ensures tutorial levels are easy (difficulty 1-3)',
-      'Inserts "rest points" after difficulty spikes'
-    ],
-    output: 'DifficultyProfile \u2014 speed 5\u219212 m/s,\nobstacles 1/50m \u2192 1/15m,\nreward tiers: easy/med/hard/extreme,\ncurve shape: gradual with 3 rest points'
-  },
-  monetization: {
-    title: 'Monetization',
-    layer: 'Layer 3 \u2014 Revenue',
-    layerClass: 'layer-3-bg',
-    desc: 'IAP, ads, and contextual offers placed ethically. Maximizes revenue without destroying player experience \u2014 with hard guardrails against dark patterns.',
-    does: [
-      'Places ad slots (interstitial, rewarded, banner)',
-      'Configures IAP catalog with App Store price tiers',
-      'Creates contextual offers (post-level, post-death)',
-      'Enforces frequency caps and ethical guardrails',
-      'Handles COPPA/GDPR compliance per audience'
-    ],
-    output: 'MonetizationPlan \u2014 rewarded ad on death,\ninterstitial every 3rd run,\ngem packs $0.99-$19.99,\nstarter bundle $2.99 (one-time)'
-  },
-  liveops: {
-    title: 'LiveOps',
-    layer: 'Layer 3 \u2014 Revenue',
-    layerClass: 'layer-3-bg',
-    desc: 'Time-limited events, seasonal content, and mini-games that keep players engaged post-launch. Drops into the game via event slots.',
-    does: [
-      'Designs event calendar (weekly, monthly, seasonal)',
-      'Creates mini-game variations that slot into the main game',
-      'Sets event reward budgets within economy limits',
-      'Generates themed content (Halloween, holidays)',
-      'Manages milestone and leaderboard mechanics'
-    ],
-    output: 'EventCalendar \u2014 Week 1: Neon Rush\nchallenge, Week 3: Cyberpunk Festival,\nmonthly tournaments,\ndaily challenges with coin rewards'
-  },
-  analytics: {
-    title: 'Analytics',
-    layer: 'Layer 4 \u2014 Optimization',
-    layerClass: 'layer-4-bg',
-    desc: 'Telemetry, KPIs, funnels, and dashboards. Tracks everything that matters and feeds data to AB Testing for continuous optimization.',
-    does: [
-      'Instruments every trackable event across all verticals',
-      'Defines KPI computations (D1/D7/D30, ARPU, LTV)',
-      'Creates funnel definitions (install \u2192 tutorial \u2192 purchase)',
-      'Configures dashboards and alerting rules',
-      'Produces the EventTaxonomy consumed by AB Testing'
-    ],
-    output: 'EventTaxonomy \u2014 28 tracked events,\n3 funnels (acquisition, monetization,\nengagement), D1/D7/D30 retention,\nARPDAU, sessions/day dashboards'
-  },
-  abtesting: {
-    title: 'AB Testing',
-    layer: 'Layer 4 \u2014 Optimization',
-    layerClass: 'layer-4-bg',
-    desc: 'Experiments, traffic allocation, and multi-armed bandits. Tests everything post-launch and automatically promotes winning variants.',
-    does: [
-      'Designs initial experiments from tunable parameters',
-      'Allocates traffic across variants (50/50, multi-arm)',
-      'Defines success and guardrail metrics per experiment',
-      'Prevents conflicting experiments from running together',
-      'Feeds winning variants back to Economy, Difficulty, Monetization'
-    ],
-    output: 'ExperimentPlan \u2014 3 experiments:\nad frequency (3 vs 5 runs),\nstarting coins (50 vs 100),\nenergy regen (15 vs 20 vs 30 min)'
-  }
 };
 
-// ========================================
-// SCROLL REVEAL
-// ========================================
+let selectedGame = null;
 
-const revealObserver = new IntersectionObserver((entries) => {
+// ── Build Step Labels ─────────────────────────────────────────
+const BUILD_LABELS = [
+  'Raw core mechanic',
+  'UI Shell applied',
+  'Economy balanced',
+  'Difficulty tuned',
+  'Monetization placed',
+  'LiveOps event active',
+  'Ship-ready game',
+];
+
+let currentBuildStep = -1;
+
+// ── Scroll Stage Tracker ──────────────────────────────────────
+// Advances body[data-scroll-stage] as user scrolls deeper sections
+const STAGE_MAP = [
+  { id: 'intro',         stage: 0 },
+  { id: 'process',       stage: 0 },
+  { id: 'game-selector', stage: 1 },
+  { id: 'build',         stage: 2 },
+  { id: 'pipeline',      stage: 3 },
+];
+
+const stageObserver = new IntersectionObserver(entries => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+    if (!entry.isIntersecting) return;
+    const found = STAGE_MAP.find(s => s.id === entry.target.id);
+    if (found != null) {
+      document.body.dataset.scrollStage = found.stage;
+    }
+  });
+}, { threshold: 0.25 });
+
+STAGE_MAP.forEach(({ id }) => {
+  const el = document.getElementById(id);
+  if (el) stageObserver.observe(el);
+});
+
+// ── Process Step Reveal ───────────────────────────────────────
+const processObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.querySelectorAll('.process-step').forEach(s => s.classList.add('visible'));
+  });
+}, { threshold: 0.3 });
+
+const processSection = document.getElementById('process');
+if (processSection) processObserver.observe(processSection);
+
+// ── Scroll Reveal ─────────────────────────────────────────────
+const revealObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.15 });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── Game Screen Renderer — Raw ────────────────────────────────
+function renderRawGameScreen(screenEl, gameId) {
+  screenEl.innerHTML = '';
+  screenEl.className = 'iphone-screen';
+
+  if (gameId === 'metro') {
+    screenEl.innerHTML = `
+      <div class="metro-raw" id="active-game-div">
+        <div class="metro-track"></div>
+        <div class="metro-player" style="left: calc(33% - 13px)"></div>
+        <div class="metro-obstacle" style="width:28px;height:48px;bottom:36%;animation-duration:2.3s;animation-delay:0s"></div>
+        <div class="metro-obstacle" style="width:24px;height:34px;bottom:29%;animation-duration:1.9s;animation-delay:1.0s"></div>
+        <div class="metro-obstacle" style="width:32px;height:26px;bottom:25%;animation-duration:2.7s;animation-delay:1.5s"></div>
+      </div>`;
+  } else if (gameId === 'poker') {
+    screenEl.innerHTML = `
+      <div class="poker-raw" id="active-game-div">
+        <div class="poker-river">
+          <div class="poker-card">A♠</div>
+          <div class="poker-card red">K♥</div>
+          <div class="poker-card red">Q♦</div>
+          <div class="poker-card">J♣</div>
+          <div class="poker-card red">10♥</div>
+        </div>
+        <div class="poker-piles">
+          <div class="poker-pile"><div class="poker-card" style="top:3px;left:3px">A♠</div></div>
+          <div class="poker-pile"></div>
+          <div class="poker-pile"></div>
+          <div class="poker-pile"></div>
+        </div>
+      </div>`;
+  } else if (gameId === 'vowel') {
+    const letters = ['B','A','T','R','E','S','T','I','N','G','P','O','W','E','R','F','U','L','L','Y'];
+    const vowels = new Set(['A','E','I','O','U']);
+    screenEl.innerHTML = `
+      <div class="vowel-raw" id="active-game-div">
+        <div class="vowel-grid">
+          ${letters.map(l => `<div class="vowel-tile"${vowels.has(l) ? ` data-vowel="${l}"` : ''}>${l}</div>`).join('')}
+        </div>
+      </div>`;
+  }
+}
+
+// ── Apply Polish Step Overlays ────────────────────────────────
+function applyMetroOverlays(gameDiv, step) {
+  if (step >= 1) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="metro-ui-bar">
+        <span>⬡ 1,240</span>
+        <span>⚙</span>
+      </div>`);
+  }
+  if (step >= 2) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="metro-score">4,820</div>`);
+  }
+  if (step >= 3) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="metro-level">LEVEL 4</div>`);
+  }
+  if (step >= 4) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="metro-shop-btn">SHOP</div>`);
+  }
+  if (step >= 5) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="metro-event-banner">
+        <span>🌙 Night Metro Event</span><span>2d 14h</span>
+      </div>`);
+  }
+}
+
+function applyPokerOverlays(gameDiv, step) {
+  if (step >= 1) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="poker-ui-bar">
+        <span>♠ Poker Sort</span><span>⚙</span>
+      </div>`);
+  }
+  if (step >= 2) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="poker-combo">COMBO ×2</div>`);
+  }
+  if (step >= 3) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="poker-timer-bar">
+        <div class="poker-timer-fill" style="width:72%"></div>
+      </div>`);
+  }
+  if (step >= 4) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="poker-plus-time">+5s</div>`);
+  }
+  if (step >= 5) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="poker-event-banner">
+        <span>🃏 Daily Challenge</span><span>3h left</span>
+      </div>`);
+  }
+}
+
+function applyVowelOverlays(gameDiv, step) {
+  if (step >= 1) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="vowel-ui-bar">
+        <span>🔥 Streak 4</span><span>⚙</span>
+      </div>`);
+  }
+  if (step >= 2) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="vowel-coins">+25 ⬡</div>`);
+  }
+  if (step >= 3) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="vowel-level">LEVEL 7</div>`);
+  }
+  if (step >= 4) {
+    gameDiv.insertAdjacentHTML('beforeend', `<div class="vowel-hint-btn">HINT</div>`);
+  }
+  if (step >= 5) {
+    gameDiv.insertAdjacentHTML('beforeend', `
+      <div class="vowel-event-banner">
+        <span>📖 Event Words</span><span>1d 6h</span>
+      </div>`);
+  }
+}
+
+function renderPolishedGameScreen(screenEl, gameId, step) {
+  renderRawGameScreen(screenEl, gameId);
+
+  const gameDiv = screenEl.firstElementChild;
+  if (!gameDiv) return;
+
+  const prefix = gameId === 'metro' ? 'metro' : gameId === 'poker' ? 'poker' : 'vowel';
+
+  // Accumulate step classes so polish layers stack
+  for (let i = 1; i <= step; i++) {
+    gameDiv.classList.add(`${prefix}-step-${i}`);
+  }
+
+  if (gameId === 'metro')      applyMetroOverlays(gameDiv, step);
+  else if (gameId === 'poker') applyPokerOverlays(gameDiv, step);
+  else if (gameId === 'vowel') applyVowelOverlays(gameDiv, step);
+}
+
+// ── Game Selector ─────────────────────────────────────────────
+function selectGame(gameId) {
+  const game = GAMES[gameId];
+  if (!game) return;
+
+  selectedGame = gameId;
+
+  // Sync cards
+  document.querySelectorAll('.prompt-card').forEach(card => {
+    card.classList.toggle('active', card.dataset.game === gameId);
+  });
+
+  // Sync dots
+  document.querySelectorAll('.selector-dot').forEach(dot => {
+    dot.classList.toggle('active', dot.dataset.game === gameId);
+  });
+
+  // Populate reveal panel
+  document.getElementById('reveal-prompt-text').textContent = game.prompt;
+  renderRawGameScreen(document.getElementById('reveal-screen'), gameId);
+
+  // Show reveal panel with animation
+  const reveal = document.getElementById('game-reveal');
+  reveal.classList.remove('visible');
+  requestAnimationFrame(() => reveal.classList.add('visible'));
+  reveal.removeAttribute('aria-hidden');
+
+  // If build screen is visible, refresh it at current step
+  const buildScreen = document.getElementById('build-screen');
+  if (buildScreen && currentBuildStep >= 0) {
+    renderPolishedGameScreen(buildScreen, gameId, currentBuildStep);
+  } else if (buildScreen) {
+    renderRawGameScreen(buildScreen, gameId);
+  }
+}
+
+document.querySelectorAll('.prompt-card').forEach(card => {
+  card.addEventListener('click', () => selectGame(card.dataset.game));
+  card.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      selectGame(card.dataset.game);
+    }
+  });
+});
+
+document.querySelectorAll('.selector-dot').forEach(dot => {
+  dot.addEventListener('click', () => selectGame(dot.dataset.game));
+});
+
+// ── Progressive Build Stepper ─────────────────────────────────
+function applyBuildStep(step) {
+  currentBuildStep = step;
+
+  // Sync active card
+  document.querySelectorAll('.build-step-card').forEach(card => {
+    card.classList.toggle('active', parseInt(card.dataset.step, 10) === step);
+  });
+
+  // Update label — only once a game is selected
+  const labelEl = document.getElementById('build-step-label');
+  if (labelEl) labelEl.textContent = selectedGame ? (BUILD_LABELS[step] ?? '') : 'Raw core mechanic';
+
+  // Update phone glow
+  const phone = document.getElementById('build-phone');
+  if (phone) phone.dataset.step = step;
+
+  // Render game at current polish step
+  const screenEl = document.getElementById('build-screen');
+  if (!screenEl) return;
+
+  if (selectedGame) {
+    renderPolishedGameScreen(screenEl, selectedGame, step);
+  } else {
+    // No game selected yet — show placeholder
+    screenEl.innerHTML = '<div class="build-screen-placeholder"><span>← Select a game above</span></div>';
+  }
+}
+
+const buildStepObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const step = parseInt(entry.target.dataset.step, 10);
+    if (step === currentBuildStep) return;
+    applyBuildStep(step);
+  });
+}, { threshold: 0.55 });
+
+document.querySelectorAll('.build-step-card').forEach(card => buildStepObserver.observe(card));
+
+// Seed the build screen when build section enters view
+const buildSectionObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    if (currentBuildStep >= 0) return; // already seeded
+    const screenEl = document.getElementById('build-screen');
+    if (!screenEl) return;
+    if (selectedGame) {
+      renderRawGameScreen(screenEl, selectedGame);
+      currentBuildStep = 0;
+      applyBuildStep(0);
     }
   });
 }, { threshold: 0.1 });
 
-document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-// ========================================
-// DECONSTRUCTED VIEW — COMPONENT CLICK
-// ========================================
-
-const detailPanel = document.getElementById('detail-panel');
-const detailClose = document.getElementById('detail-close');
-const pieces = document.querySelectorAll('.component-piece');
-let activeComponent = null;
-
-pieces.forEach(piece => {
-  piece.addEventListener('click', () => {
-    const key = piece.dataset.component;
-    const data = componentData[key];
-    if (!data) return;
-
-    // Toggle off if clicking same piece
-    if (activeComponent === key) {
-      closeDetail();
-      return;
-    }
-
-    activeComponent = key;
-
-    // Update active state
-    pieces.forEach(p => p.classList.remove('active'));
-    piece.classList.add('active');
-
-    // Populate detail panel
-    document.getElementById('detail-badge').className = 'detail-layer-badge ' + data.layerClass;
-    document.getElementById('detail-badge').textContent = data.layer;
-    document.getElementById('detail-title').textContent = data.title;
-    document.getElementById('detail-desc').textContent = data.desc;
-
-    const doesList = document.getElementById('detail-does');
-    doesList.innerHTML = data.does.map(d => `<li>${d}</li>`).join('');
-
-    document.getElementById('detail-output').textContent = data.output;
-
-    // Update phone content
-    const phoneContent = document.getElementById('phone-content');
-    phoneContent.innerHTML = `
-      <div style="text-align:center">
-        <div style="font-size:32px;margin-bottom:8px">${piece.querySelector('.piece-icon').innerHTML}</div>
-        <div style="font-weight:700;font-size:14px;color:#1f2937">${data.title}</div>
-        <div style="font-size:11px;color:#9ca3af;margin-top:4px">${data.layer}</div>
-      </div>
-    `;
-
-    // Open panel
-    detailPanel.classList.add('open');
-  });
-});
-
-function closeDetail() {
-  detailPanel.classList.remove('open');
-  pieces.forEach(p => p.classList.remove('active'));
-  activeComponent = null;
-
-  // Reset phone
-  document.getElementById('phone-content').innerHTML = `
-    <div class="phone-placeholder">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-gray-300"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-      <span class="text-gray-400 text-sm mt-2">Select a component</span>
-    </div>
-  `;
-}
-
-detailClose.addEventListener('click', closeDetail);
-
-// Close on escape
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') closeDetail();
-});
-
-// Close on click outside
-document.addEventListener('click', (e) => {
-  if (detailPanel.classList.contains('open') &&
-      !detailPanel.contains(e.target) &&
-      !e.target.closest('.component-piece')) {
-    closeDetail();
-  }
-});
-
-// ========================================
-// GENRE SWITCHER
-// ========================================
-
-const genreTabs = document.querySelectorAll('.genre-tab');
-const genrePanels = document.querySelectorAll('.genre-panel');
-
-genreTabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    const genre = tab.dataset.genre;
-
-    genreTabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    genrePanels.forEach(p => {
-      if (p.dataset.genre === genre) {
-        p.classList.add('active');
-        // Animate in
-        p.style.opacity = '0';
-        p.style.transform = 'translateY(10px)';
-        requestAnimationFrame(() => {
-          p.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
-          p.style.opacity = '1';
-          p.style.transform = 'translateY(0)';
-        });
-      } else {
-        p.classList.remove('active');
-      }
-    });
-  });
-});
-
-// ========================================
-// PIPELINE ANIMATION
-// ========================================
-
-const pipelineSection = document.getElementById('pipeline');
-const pipelinePhases = document.querySelectorAll('.pipeline-phase');
-const pipelineProgress = document.getElementById('pipeline-progress');
-let pipelineAnimated = false;
-
-const pipelineObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !pipelineAnimated) {
-      pipelineAnimated = true;
-      animatePipeline();
-    }
-  });
-}, { threshold: 0.3 });
-
-pipelineObserver.observe(pipelineSection);
-
-function animatePipeline() {
-  pipelinePhases.forEach((phase, i) => {
-    setTimeout(() => {
-      phase.classList.add('visible');
-      phase.classList.add('active');
-
-      // Update progress bar
-      const progress = ((i + 1) / pipelinePhases.length) * 100;
-      pipelineProgress.style.width = progress + '%';
-    }, i * 300);
-  });
-}
-
-// ========================================
-// SMOOTH SCROLL
-// ========================================
-
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  });
-});
+const buildSection = document.getElementById('build');
+if (buildSection) buildSectionObserver.observe(buildSection);

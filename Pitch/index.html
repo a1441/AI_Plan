@@ -1,707 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Game Engine</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
-<body class="bg-white text-gray-900 font-sans antialiased">
+<body class="page-root" data-scroll-stage="0">
 
-  <!-- ============================================ -->
-  <!-- SECTION 1: HERO                              -->
-  <!-- ============================================ -->
-  <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden">
-    <div class="absolute inset-0 hero-gradient"></div>
-    <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
-      <div class="inline-block px-4 py-1.5 rounded-full bg-teal-50 text-teal-700 text-sm font-medium mb-6 fade-in">
-        AI-Powered Game Creation
-      </div>
-      <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-6 fade-in fade-in-delay-1">
-        Build Complete Games<br>
-        <span class="text-gradient">With AI Agents</span>
+  <!-- SECTION 1: INTRO -->
+  <section id="intro" class="section-intro">
+    <div class="intro-inner">
+      <p class="intro-eyebrow">AI Game Engine</p>
+      <h1 class="intro-title">
+        Building Complete Games<br />
+        with an AI Framework
       </h1>
-      <p class="text-xl md:text-2xl text-gray-500 max-w-2xl mx-auto mb-10 fade-in fade-in-delay-2">
-        9 specialized AI agents collaborate to generate, balance, monetize, and optimize mobile games — from a one-page brief to a live product.
+      <p class="intro-sub">
+        A pipeline of specialized agents that collaborates to generate,<br />
+        balance, test, and ship mobile games — from a single prompt.
       </p>
-      <a href="#problem" class="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full text-lg font-medium hover:bg-gray-800 transition-colors fade-in fade-in-delay-3">
-        See How It Works
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3v14m0 0l-5-5m5 5l5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- SECTION 2: THE PROBLEM                       -->
-  <!-- ============================================ -->
-  <section id="problem" class="py-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">The Problem</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-16 reveal">Building games is hard.<br>Running them is harder.</h3>
-
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="problem-card reveal reveal-delay-1">
-          <div class="problem-icon bg-orange-50 text-orange-600">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-          </div>
-          <h4 class="text-lg font-semibold mb-2">Months to Build</h4>
-          <p class="text-gray-500">A typical mobile game takes 6-18 months from concept to launch. Most of that time is spent on systems that are structurally identical across games.</p>
-        </div>
-
-        <div class="problem-card reveal reveal-delay-2">
-          <div class="problem-icon bg-red-50 text-red-600">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-          </div>
-          <h4 class="text-lg font-semibold mb-2">No Post-Launch Intelligence</h4>
-          <p class="text-gray-500">Most studios can build a game but can't optimize it. Economy balancing, AB testing, LiveOps, and analytics require specialized skills few teams have.</p>
-        </div>
-
-        <div class="problem-card reveal reveal-delay-3">
-          <div class="problem-icon bg-purple-50 text-purple-600">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
-          </div>
-          <h4 class="text-lg font-semibold mb-2">AI Tools Are Fragmented</h4>
-          <p class="text-gray-500">AI can generate art, write code, and design levels. But no single system handles the full lifecycle — build, balance, monetize, test, and operate.</p>
-        </div>
+  <!-- SECTION 2: PROCESS DIAGRAM -->
+  <section id="process" class="section-process">
+    <div class="process-inner">
+      <div class="process-step" data-step="1">
+        <div class="process-icon">✦</div>
+        <div class="process-label">Prompt</div>
+        <div class="process-desc">One sentence. The idea.</div>
+      </div>
+      <div class="process-arrow">→</div>
+      <div class="process-step" data-step="2">
+        <div class="process-icon">⬡</div>
+        <div class="process-label">Web Prototype</div>
+        <div class="process-desc">AI builds a playable HTML version</div>
+      </div>
+      <div class="process-arrow">→</div>
+      <div class="process-step" data-step="3">
+        <div class="process-icon">▷</div>
+        <div class="process-label">Playtest</div>
+        <div class="process-desc">Verify the core loop is fun</div>
+      </div>
+      <div class="process-arrow">→</div>
+      <div class="process-step" data-step="4">
+        <div class="process-icon">◈</div>
+        <div class="process-label">Engine</div>
+        <div class="process-desc">Translated into a game engine</div>
+      </div>
+      <div class="process-arrow">→</div>
+      <div class="process-step" data-step="5">
+        <div class="process-icon">⬆</div>
+        <div class="process-label">Ship</div>
+        <div class="process-desc">Export iOS &amp; Android apps</div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- SECTION 3: THE SOLUTION — DECONSTRUCTED VIEW -->
-  <!-- ============================================ -->
-  <section id="solution" class="py-24 px-6 bg-gray-50">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">The Solution</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-4 reveal">One engine. Nine AI agents.</h3>
-      <p class="text-lg text-gray-500 mb-16 max-w-2xl reveal">Click any component to see what its AI agent does.</p>
+  <!-- SECTION 3: GAME SELECTOR -->
+  <section id="game-selector" class="section-selector">
+    <div class="selector-header">
+      <p class="selector-label">Start with a prompt</p>
+      <h2 class="selector-title">Choose a Core Game Loop</h2>
+    </div>
 
-      <div class="deconstructed-container">
-        <!-- Phone frame in center -->
-        <div class="phone-frame reveal">
-          <div class="phone-screen">
-            <div class="phone-status-bar">
-              <span>9:41</span>
-              <span>AI Game</span>
-              <span class="flex gap-1">
-                <span class="w-4 h-2 bg-gray-700 rounded-sm"></span>
-                <span class="w-1.5 h-2 bg-gray-700 rounded-sm"></span>
-              </span>
-            </div>
-            <div class="phone-content" id="phone-content">
-              <div class="phone-placeholder">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-gray-300"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                <span class="text-gray-400 text-sm mt-2">Select a component</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Floating component pieces -->
-        <div class="components-orbit">
-          <!-- Layer 1: Foundation (blue) -->
-          <button class="component-piece layer-1" data-component="ui" style="--angle: 0deg; --distance: 200px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-            </div>
-            <span class="piece-label">UI Shell</span>
-          </button>
-
-          <button class="component-piece layer-1" data-component="mechanics" style="--angle: 40deg; --distance: 220px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h4l2-8 4 16 2-8h4"/></svg>
-            </div>
-            <span class="piece-label">Mechanics</span>
-          </button>
-
-          <button class="component-piece layer-1" data-component="assets" style="--angle: 80deg; --distance: 190px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-            </div>
-            <span class="piece-label">Assets</span>
-          </button>
-
-          <!-- Layer 2: Balance (green) -->
-          <button class="component-piece layer-2" data-component="economy" style="--angle: 130deg; --distance: 210px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12m-4-8h8m-6 4h4"/></svg>
-            </div>
-            <span class="piece-label">Economy</span>
-          </button>
-
-          <button class="component-piece layer-2" data-component="difficulty" style="--angle: 170deg; --distance: 200px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20l4-4 4 4 4-8 4 4"/><path d="M21 4h-5m5 0v5"/></svg>
-            </div>
-            <span class="piece-label">Difficulty</span>
-          </button>
-
-          <!-- Layer 3: Revenue (orange) -->
-          <button class="component-piece layer-3" data-component="monetization" style="--angle: 210deg; --distance: 220px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-            </div>
-            <span class="piece-label">Monetization</span>
-          </button>
-
-          <button class="component-piece layer-3" data-component="liveops" style="--angle: 250deg; --distance: 195px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-            </div>
-            <span class="piece-label">LiveOps</span>
-          </button>
-
-          <!-- Layer 4: Optimization (purple) -->
-          <button class="component-piece layer-4" data-component="analytics" style="--angle: 300deg; --distance: 210px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
-            </div>
-            <span class="piece-label">Analytics</span>
-          </button>
-
-          <button class="component-piece layer-4" data-component="abtesting" style="--angle: 340deg; --distance: 200px">
-            <div class="piece-icon">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/></svg>
-            </div>
-            <span class="piece-label">AB Testing</span>
-          </button>
-        </div>
-
-        <!-- Detail panel (slides in on click) -->
-        <div class="detail-panel" id="detail-panel">
-          <button class="detail-close" id="detail-close">&times;</button>
-          <div class="detail-layer-badge" id="detail-badge">Layer 1</div>
-          <h4 class="detail-title" id="detail-title">UI Shell</h4>
-          <p class="detail-desc" id="detail-desc">Description here</p>
-          <div class="detail-section">
-            <h5 class="detail-section-title">AI Agent Does</h5>
-            <ul class="detail-list" id="detail-does"></ul>
-          </div>
-          <div class="detail-section">
-            <h5 class="detail-section-title">Example Output</h5>
-            <div class="detail-output" id="detail-output"></div>
-          </div>
-        </div>
+    <div class="selector-cards" id="selector-cards">
+      <div class="prompt-card" data-game="metro" tabindex="0" role="button" aria-label="Select Metro Runner">
+        <div class="prompt-card-tag">Endless Runner</div>
+        <div class="prompt-card-name">Metro Runner</div>
+        <div class="prompt-card-text">An endless runner set in a neon-lit underground metro. Player swipes left/right to switch between 3 lanes, ducks under low-ceiling trains, jumps gaps…</div>
+        <div class="prompt-card-cta">Select →</div>
       </div>
+      <div class="prompt-card" data-game="poker" tabindex="0" role="button" aria-label="Select Poker Sort">
+        <div class="prompt-card-tag">Card Puzzle</div>
+        <div class="prompt-card-name">Poker Sort</div>
+        <div class="prompt-card-text">Cards flow from a central river into 4 sorting piles. Build the highest-ranked poker hand in each pile before the river overflows…</div>
+        <div class="prompt-card-cta">Select →</div>
+      </div>
+      <div class="prompt-card" data-game="vowel" tabindex="0" role="button" aria-label="Select Vowel Colour">
+        <div class="prompt-card-tag">Word Puzzle</div>
+        <div class="prompt-card-name">Vowel Colour</div>
+        <div class="prompt-card-text">A grid of letter tiles where vowels pulse with distinct colors. Tap sequences to spell words — vowels must match the color pattern shown…</div>
+        <div class="prompt-card-cta">Select →</div>
+      </div>
+    </div>
 
-      <!-- Layer legend -->
-      <div class="flex flex-wrap justify-center gap-6 mt-12 reveal">
-        <div class="flex items-center gap-2 text-sm"><span class="w-3 h-3 rounded-full bg-blue-500"></span> Foundation</div>
-        <div class="flex items-center gap-2 text-sm"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> Balance</div>
-        <div class="flex items-center gap-2 text-sm"><span class="w-3 h-3 rounded-full bg-orange-500"></span> Revenue</div>
-        <div class="flex items-center gap-2 text-sm"><span class="w-3 h-3 rounded-full bg-purple-500"></span> Optimization</div>
+    <div class="selector-dots" id="selector-dots">
+      <button class="selector-dot" data-game="metro" aria-label="Metro Runner"></button>
+      <button class="selector-dot" data-game="poker" aria-label="Poker Sort"></button>
+      <button class="selector-dot" data-game="vowel" aria-label="Vowel Colour"></button>
+    </div>
+
+    <div class="game-reveal" id="game-reveal" aria-hidden="true">
+      <div class="game-reveal-left">
+        <div class="game-reveal-prompt-label">Full Prompt</div>
+        <div class="game-reveal-prompt-text" id="reveal-prompt-text"></div>
+      </div>
+      <div class="game-reveal-right">
+        <div class="iphone-frame">
+          <div class="iphone-notch"></div>
+          <div class="iphone-screen" id="reveal-screen"></div>
+        </div>
+        <p class="reveal-caption">Raw core mechanic — no UI, no shell</p>
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- SECTION 4: GENRE SHOWCASE                    -->
-  <!-- ============================================ -->
-  <section id="genres" class="py-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">One Engine, Any Genre</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-4 reveal">Same shell. Different game inside.</h3>
-      <p class="text-lg text-gray-500 mb-12 max-w-2xl reveal">The UI shell stays constant. The mechanic slot swaps in any genre. Each AI agent adapts its decisions to the game type.</p>
-
-      <!-- Genre tabs -->
-      <div class="genre-tabs reveal" id="genre-tabs">
-        <button class="genre-tab active" data-genre="puzzle">2D Puzzle</button>
-        <button class="genre-tab" data-genre="casino">Casino</button>
-        <button class="genre-tab" data-genre="rpg">3D RPG</button>
-        <button class="genre-tab" data-genre="narrative">Narrative</button>
-        <button class="genre-tab" data-genre="runner">Endless Runner</button>
+  <!-- SECTION 4: PROGRESSIVE BUILD -->
+  <section id="build" class="section-build">
+    <div class="build-inner">
+      <div class="build-sticky-col">
+        <div class="iphone-frame build-phone" id="build-phone">
+          <div class="iphone-notch"></div>
+          <div class="iphone-screen" id="build-screen">
+            <div class="build-screen-placeholder">
+              <span>← Select a game above</span>
+            </div>
+          </div>
+        </div>
+        <div class="build-step-label" id="build-step-label">Raw core mechanic</div>
       </div>
 
-      <!-- Genre content -->
-      <div class="genre-content" id="genre-content">
-        <!-- Puzzle -->
-        <div class="genre-panel active" data-genre="puzzle">
-          <div class="genre-phone">
-            <div class="genre-phone-frame">
-              <div class="genre-screen puzzle-screen">
-                <div class="genre-screen-header">
-                  <span class="genre-currency">1,240</span>
-                  <span class="genre-title">Level 47</span>
-                  <span class="genre-lives">5</span>
-                </div>
-                <div class="genre-game-area">
-                  <div class="puzzle-grid">
-                    <span class="puzzle-gem gem-red"></span><span class="puzzle-gem gem-blue"></span><span class="puzzle-gem gem-green"></span><span class="puzzle-gem gem-red"></span>
-                    <span class="puzzle-gem gem-yellow"></span><span class="puzzle-gem gem-red"></span><span class="puzzle-gem gem-blue"></span><span class="puzzle-gem gem-green"></span>
-                    <span class="puzzle-gem gem-blue"></span><span class="puzzle-gem gem-green"></span><span class="puzzle-gem gem-yellow"></span><span class="puzzle-gem gem-blue"></span>
-                    <span class="puzzle-gem gem-green"></span><span class="puzzle-gem gem-yellow"></span><span class="puzzle-gem gem-red"></span><span class="puzzle-gem gem-yellow"></span>
-                  </div>
-                </div>
-                <div class="genre-screen-footer">
-                  <span>Moves: 12</span>
-                  <span>Goal: 30 Blues</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="genre-details">
-            <h4 class="text-xl font-bold mb-1">Match-3 Puzzle</h4>
-            <p class="text-sm text-gray-400 mb-4">Think Candy Crush, Toon Blast, Royal Match</p>
-            <div class="genre-agents">
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Economy</span>
-                <span>Tunes gem drop rates per level to control difficulty curve and purchase pressure</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Difficulty</span>
-                <span>Generates board layouts with AI — controls move count, blockers, and objectives</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">Monetization</span>
-                <span>Places "extra moves" IAP at the fail screen; rewarded ads for power-ups</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">LiveOps</span>
-                <span>Weekly tournaments, seasonal themes (Halloween boards, holiday gems)</span>
-              </div>
-            </div>
-          </div>
+      <div class="build-steps-col" id="build-steps">
+        <div class="build-step-card" data-step="0">
+          <div class="build-step-number">Start</div>
+          <div class="build-step-title">Raw Core Mechanic</div>
+          <div class="build-step-body">The prototype agent generates the core game loop in HTML. Playable in any browser. No art, no UI — just the mechanic running.</div>
         </div>
-
-        <!-- Casino -->
-        <div class="genre-panel" data-genre="casino">
-          <div class="genre-phone">
-            <div class="genre-phone-frame">
-              <div class="genre-screen casino-screen">
-                <div class="genre-screen-header">
-                  <span class="genre-currency">42,500</span>
-                  <span class="genre-title">Lucky Spins</span>
-                  <span class="genre-lives">VIP 3</span>
-                </div>
-                <div class="genre-game-area">
-                  <div class="slot-machine">
-                    <div class="slot-reel">7</div>
-                    <div class="slot-reel">7</div>
-                    <div class="slot-reel">7</div>
-                  </div>
-                  <div class="slot-btn">SPIN</div>
-                </div>
-                <div class="genre-screen-footer">
-                  <span>Bet: 500</span>
-                  <span>Jackpot: 1M</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="genre-details">
-            <h4 class="text-xl font-bold mb-1">Casino / Slots</h4>
-            <p class="text-sm text-gray-400 mb-4">Think Coin Master, Slotomania, Big Fish Casino</p>
-            <div class="genre-agents">
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Economy</span>
-                <span>Configures chip economy — earn rates, bet multipliers, jackpot odds per player segment</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Difficulty</span>
-                <span>Tunes RTP (Return to Player) curves — near-misses, streak mechanics, payout tables</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">Monetization</span>
-                <span>Timed chip offers, VIP subscription tiers, daily bonus wheels</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-4-bg">AB Testing</span>
-                <span>Tests bet UI layouts, bonus frequency, and chip package pricing</span>
-              </div>
-            </div>
-          </div>
+        <div class="build-step-card" data-step="1">
+          <div class="build-step-number">Agent 1</div>
+          <div class="build-step-title">UI Shell</div>
+          <div class="build-step-body">The UI agent wraps the mechanic in a standardized shell: navigation bar, currency display, settings icon, and themed font. The game looks like a real app.</div>
         </div>
-
-        <!-- RPG -->
-        <div class="genre-panel" data-genre="rpg">
-          <div class="genre-phone">
-            <div class="genre-phone-frame">
-              <div class="genre-screen rpg-screen">
-                <div class="genre-screen-header">
-                  <span class="genre-currency">3,400</span>
-                  <span class="genre-title">Dark Realm</span>
-                  <span class="genre-lives">Lv 28</span>
-                </div>
-                <div class="genre-game-area">
-                  <div class="rpg-scene">
-                    <div class="rpg-char">&#9876;</div>
-                    <div class="rpg-enemy">&#128126;</div>
-                    <div class="rpg-hp">
-                      <div class="rpg-hp-bar" style="width:65%"></div>
-                    </div>
-                  </div>
-                </div>
-                <div class="genre-screen-footer">
-                  <span>ATK: 142</span>
-                  <span>Chapter 3-5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="genre-details">
-            <h4 class="text-xl font-bold mb-1">3D RPG / Battle</h4>
-            <p class="text-sm text-gray-400 mb-4">Think AFK Arena, Raid: Shadow Legends, Genshin Impact</p>
-            <div class="genre-agents">
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-1-bg">Mechanics</span>
-                <span>Generates combat system — turn-based or real-time, skill trees, elemental affinities</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Economy</span>
-                <span>Multi-currency system (gold, gems, energy, shards), gacha pull rates, equipment tiers</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Difficulty</span>
-                <span>Enemy scaling per chapter, gear checks, recommended power levels</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">LiveOps</span>
-                <span>Raid bosses, guild wars, limited-time character banners, seasonal dungeons</span>
-              </div>
-            </div>
-          </div>
+        <div class="build-step-card" data-step="2">
+          <div class="build-step-number">Agent 2</div>
+          <div class="build-step-title">Economy Layer</div>
+          <div class="build-step-body">The economy agent injects faucets and sinks: coins appear, a progress bar tracks session goals, and level indicators frame the run.</div>
         </div>
-
-        <!-- Narrative -->
-        <div class="genre-panel" data-genre="narrative">
-          <div class="genre-phone">
-            <div class="genre-phone-frame">
-              <div class="genre-screen narrative-screen">
-                <div class="genre-screen-header">
-                  <span class="genre-currency">80</span>
-                  <span class="genre-title">Episode 5</span>
-                  <span class="genre-lives">Ch. 2</span>
-                </div>
-                <div class="genre-game-area">
-                  <div class="narrative-scene">
-                    <div class="narrative-text">"The letter changes everything. Do you confront him now, or wait?"</div>
-                    <div class="narrative-choices">
-                      <div class="narrative-choice">Confront now</div>
-                      <div class="narrative-choice">Wait and investigate</div>
-                    </div>
-                  </div>
-                </div>
-                <div class="genre-screen-footer">
-                  <span>Choices: 2/3</span>
-                  <span>Keys: 5</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="genre-details">
-            <h4 class="text-xl font-bold mb-1">Narrative / Story</h4>
-            <p class="text-sm text-gray-400 mb-4">Think Choices, Episode, Chapters, Love Sick</p>
-            <div class="genre-agents">
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-1-bg">Mechanics</span>
-                <span>Branching dialogue system, choice tracking, relationship meters, chapter progression</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Economy</span>
-                <span>Key/ticket energy system — gate premium story branches behind currency</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">Monetization</span>
-                <span>Premium choice unlocks, outfit purchases, episode bundles, ad-to-unlock chapters</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-1-bg">Assets</span>
-                <span>AI-generated character art, scene backgrounds, outfit variations, UI mood theming</span>
-              </div>
-            </div>
-          </div>
+        <div class="build-step-card" data-step="3">
+          <div class="build-step-number">Agent 3</div>
+          <div class="build-step-title">Difficulty Curve</div>
+          <div class="build-step-body">The difficulty agent shapes the experience: early levels are forgiving, tension builds, milestones gate content. The curve is visible in the level display.</div>
         </div>
-
-        <!-- Runner -->
-        <div class="genre-panel" data-genre="runner">
-          <div class="genre-phone">
-            <div class="genre-phone-frame">
-              <div class="genre-screen runner-screen">
-                <div class="genre-screen-header">
-                  <span class="genre-currency">580</span>
-                  <span class="genre-title">Neon Rush</span>
-                  <span class="genre-lives">x3</span>
-                </div>
-                <div class="genre-game-area">
-                  <div class="runner-scene">
-                    <div class="runner-lanes">
-                      <div class="runner-lane"></div>
-                      <div class="runner-lane">
-                        <div class="runner-char">&#9654;</div>
-                      </div>
-                      <div class="runner-lane"></div>
-                    </div>
-                    <div class="runner-obstacles">
-                      <span class="runner-obstacle" style="left:10%"></span>
-                      <span class="runner-obstacle" style="left:70%"></span>
-                      <span class="runner-coin" style="left:40%"></span>
-                    </div>
-                  </div>
-                </div>
-                <div class="genre-screen-footer">
-                  <span>2,450m</span>
-                  <span>Best: 5,120m</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="genre-details">
-            <h4 class="text-xl font-bold mb-1">Endless Runner</h4>
-            <p class="text-sm text-gray-400 mb-4">Think Subway Surfers, Temple Run, Crossy Road</p>
-            <div class="genre-agents">
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-1-bg">Mechanics</span>
-                <span>Lane switching, jumping, sliding — speed increases with distance, procedural obstacles</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-2-bg">Difficulty</span>
-                <span>Speed curve, obstacle density, coin placement — all scale with distance run</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-3-bg">Monetization</span>
-                <span>Rewarded ad for extra life on death, character skins, coin doublers</span>
-              </div>
-              <div class="genre-agent">
-                <span class="genre-agent-badge layer-4-bg">Analytics</span>
-                <span>Tracks average run distance, death causes, coin earn rate — feeds difficulty tuning</span>
-              </div>
-            </div>
-          </div>
+        <div class="build-step-card" data-step="4">
+          <div class="build-step-number">Agent 4</div>
+          <div class="build-step-title">Monetization</div>
+          <div class="build-step-body">The monetization agent adds a shop button, an extra-life prompt placement, and a daily bonus indicator. Revenue surfaces added ethically, never forced.</div>
+        </div>
+        <div class="build-step-card" data-step="5">
+          <div class="build-step-number">Agent 5</div>
+          <div class="build-step-title">LiveOps Event</div>
+          <div class="build-step-body">The LiveOps agent drops in a time-limited event banner. Seasonal theming updates the color palette. The game feels alive — not static.</div>
+        </div>
+        <div class="build-step-card" data-step="6">
+          <div class="build-step-number">Ship</div>
+          <div class="build-step-title">Full Game</div>
+          <div class="build-step-body">All agents have run. The HTML prototype is now a polished, playable game ready for translation into the engine — and export to the App Store.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ============================================ -->
-  <!-- SECTION 5: THE PIPELINE                      -->
-  <!-- ============================================ -->
-  <section id="pipeline" class="py-24 px-6 bg-gray-50">
-    <div class="max-w-6xl mx-auto">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">The Pipeline</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-4 reveal">From brief to game in minutes.</h3>
-      <p class="text-lg text-gray-500 mb-16 max-w-2xl reveal">A one-page GameSpec enters the pipeline. Nine AI agents process it in six coordinated phases.</p>
+  <!-- SECTION 5: PIPELINE NARRATIVE -->
+  <section id="pipeline" class="section-pipeline">
+    <div class="pipeline-inner">
+      <p class="pipeline-eyebrow">Under the hood</p>
+      <h2 class="pipeline-title">How it actually works</h2>
 
-      <div class="pipeline-timeline reveal">
-        <div class="pipeline-track">
-          <div class="pipeline-progress" id="pipeline-progress"></div>
-        </div>
-
-        <div class="pipeline-phases">
-          <div class="pipeline-phase" data-phase="1">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 1</div>
-              <div class="phase-name">Foundation</div>
-              <div class="phase-agents">
-                <span class="phase-agent layer-1-bg">UI</span>
-                <span class="phase-agent layer-1-bg">Mechanics</span>
-                <span class="phase-agent layer-1-bg">Assets</span>
-              </div>
-              <div class="phase-time">~30s</div>
-            </div>
-          </div>
-
-          <div class="pipeline-phase" data-phase="2">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 2</div>
-              <div class="phase-name">Balance</div>
-              <div class="phase-agents">
-                <span class="phase-agent layer-2-bg">Economy</span>
-                <span class="phase-agent layer-2-bg">Difficulty</span>
-              </div>
-              <div class="phase-time">~45s</div>
-            </div>
-          </div>
-
-          <div class="pipeline-phase" data-phase="3">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 3</div>
-              <div class="phase-name">Revenue</div>
-              <div class="phase-agents">
-                <span class="phase-agent layer-3-bg">Monetization</span>
-              </div>
-              <div class="phase-time">~20s</div>
-            </div>
-          </div>
-
-          <div class="pipeline-phase" data-phase="4">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 4</div>
-              <div class="phase-name">Content</div>
-              <div class="phase-agents">
-                <span class="phase-agent layer-3-bg">LiveOps</span>
-              </div>
-              <div class="phase-time">~30s</div>
-            </div>
-          </div>
-
-          <div class="pipeline-phase" data-phase="5">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 5</div>
-              <div class="phase-name">Optimize</div>
-              <div class="phase-agents">
-                <span class="phase-agent layer-4-bg">Analytics</span>
-                <span class="phase-agent layer-4-bg">AB Test</span>
-              </div>
-              <div class="phase-time">~30s</div>
-            </div>
-          </div>
-
-          <div class="pipeline-phase" data-phase="6">
-            <div class="phase-dot"></div>
-            <div class="phase-content">
-              <div class="phase-number">Phase 6</div>
-              <div class="phase-name">Ship</div>
-              <div class="phase-agents">
-                <span class="phase-agent bg-gray-700 text-white">Assembly</span>
-              </div>
-              <div class="phase-time">~10s</div>
-            </div>
+      <div class="pipeline-steps">
+        <div class="pipeline-item reveal">
+          <div class="pipeline-item-num">01</div>
+          <div class="pipeline-item-content">
+            <h3>AI agents build the game in web format</h3>
+            <p>Each agent writes HTML, CSS, and JS. The result is a fully playable browser game — fast to iterate, easy to test, no build pipeline needed.</p>
           </div>
         </div>
-      </div>
-
-      <div class="text-center mt-12 reveal">
-        <div class="inline-flex items-center gap-3 px-6 py-3 bg-white rounded-2xl shadow-sm border border-gray-100">
-          <span class="text-3xl font-bold text-teal-600">~3-5 min</span>
-          <span class="text-gray-500">from GameSpec to complete game config</span>
+        <div class="pipeline-item reveal reveal-delay-1">
+          <div class="pipeline-item-num">02</div>
+          <div class="pipeline-item-content">
+            <h3>Play tested to verify the core loop is fun</h3>
+            <p>Before adding any monetization or polish, a playtest agent runs the mechanic, measures retention signals, and flags if the loop needs tuning.</p>
+          </div>
+        </div>
+        <div class="pipeline-item reveal reveal-delay-2">
+          <div class="pipeline-item-num">03</div>
+          <div class="pipeline-item-content">
+            <h3>A translation agent reads the HTML structure</h3>
+            <p>The translator maps game objects, logic, and interactions from the HTML/JS prototype into a normalized game engine schema — preserving intent, not code.</p>
+          </div>
+        </div>
+        <div class="pipeline-item reveal reveal-delay-3">
+          <div class="pipeline-item-num">04</div>
+          <div class="pipeline-item-content">
+            <h3>Export to iOS and Android</h3>
+            <p>The schema is consumed by the engine layer — Unity, Godot, or a custom runtime — and compiled into native app bundles ready for store submission.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
-
-  <!-- ============================================ -->
-  <!-- SECTION 6: MARKET GAP                        -->
-  <!-- ============================================ -->
-  <section id="gap" class="py-24 px-6">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">The Market Gap</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-4 reveal">Build tools are everywhere.<br>Lifecycle tools don't exist.</h3>
-      <p class="text-lg text-gray-500 mb-16 max-w-2xl reveal">AI can generate art and code. But nobody automates what happens after launch — the part that determines whether a game makes money.</p>
-
-      <div class="gap-matrix reveal">
-        <div class="gap-header">
-          <div class="gap-cell gap-label"></div>
-          <div class="gap-cell gap-col-header">Build</div>
-          <div class="gap-cell gap-col-header">Economy</div>
-          <div class="gap-cell gap-col-header">AB Testing</div>
-          <div class="gap-cell gap-col-header">LiveOps</div>
-          <div class="gap-cell gap-col-header">Analytics</div>
-          <div class="gap-cell gap-col-header">Monetization</div>
-        </div>
-
-        <div class="gap-row">
-          <div class="gap-cell gap-label">AI Art Tools</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-        </div>
-
-        <div class="gap-row">
-          <div class="gap-cell gap-label">Vibe Coding</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-        </div>
-
-        <div class="gap-row">
-          <div class="gap-cell gap-label">Game Engines</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-partial">~</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-        </div>
-
-        <div class="gap-row">
-          <div class="gap-cell gap-label">Analytics Platforms</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-partial">~</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-no">&#10007;</div>
-        </div>
-
-        <div class="gap-row gap-highlight">
-          <div class="gap-cell gap-label font-bold text-teal-700">AI Game Engine</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-          <div class="gap-cell gap-yes">&#10003;</div>
-        </div>
-      </div>
-
-      <p class="text-center text-sm text-gray-400 mt-6 reveal">The only solution covering the full game lifecycle with AI-driven intelligence.</p>
-    </div>
-  </section>
-
-  <!-- ============================================ -->
-  <!-- SECTION 7: NEXT STEPS                        -->
-  <!-- ============================================ -->
-  <section id="next" class="py-24 px-6 bg-gray-50">
-    <div class="max-w-4xl mx-auto text-center">
-      <h2 class="text-sm font-semibold text-teal-600 uppercase tracking-wider mb-3 reveal">Roadmap</h2>
-      <h3 class="text-3xl md:text-4xl font-bold mb-16 reveal">Where we are. Where we're going.</h3>
-
-      <div class="roadmap reveal">
-        <div class="roadmap-item completed">
-          <div class="roadmap-dot"></div>
-          <div class="roadmap-content">
-            <div class="roadmap-status">Complete</div>
-            <h4 class="roadmap-title">Documentation & Architecture</h4>
-            <p class="roadmap-desc">85-file knowledge base. All 9 verticals specified. Shared interfaces, data contracts, quality gates defined.</p>
-          </div>
-        </div>
-
-        <div class="roadmap-item current">
-          <div class="roadmap-dot"></div>
-          <div class="roadmap-content">
-            <div class="roadmap-status">In Progress</div>
-            <h4 class="roadmap-title">Prototype Pipeline</h4>
-            <p class="roadmap-desc">Build the orchestrator and first 3 agents (UI, Mechanics, Economy). Generate a playable runner game from a GameSpec.</p>
-          </div>
-        </div>
-
-        <div class="roadmap-item future">
-          <div class="roadmap-dot"></div>
-          <div class="roadmap-content">
-            <div class="roadmap-status">Next</div>
-            <h4 class="roadmap-title">Full Product</h4>
-            <p class="roadmap-desc">All 9 agents operational. Post-launch management: AB testing, economy tuning, LiveOps automation. Builder UI for non-technical users.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="mt-16 reveal">
-        <p class="text-gray-500 mb-6">Built by a team with deep mobile gaming expertise and AI-native workflows.</p>
-        <a href="#hero" class="inline-flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-full text-lg font-medium hover:bg-gray-800 transition-colors">
-          Back to Top
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 17V3m0 0l-5 5m5-5l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <footer class="py-8 px-6 text-center text-sm text-gray-400 border-t border-gray-100">
-    AI Game Engine &mdash; Confidential
-  </footer>
 
   <script src="app.js"></script>
 </body>
