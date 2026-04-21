@@ -17,7 +17,6 @@
       <button class="step-btn active" data-step="1">Step 1</button>
       <button class="step-btn" data-step="2">Step 2</button>
       <button class="step-btn" data-step="3">Step 3</button>
-      <button class="step-btn" data-step="4">Step 4</button>
     </nav>
   </header>
 
@@ -227,24 +226,506 @@
 
     </section>
 
-    <!-- STEP 2 (placeholder) -->
+    <!-- STEP 2: LEVEL DESIGN -->
     <section class="step-view" data-step="2">
       <div class="step-eyebrow">Step 2</div>
-      <h2 class="step-heading">Coming soon</h2>
+      <h2 class="step-heading">Level Design</h2>
+      <p class="step-lede">Digest each level into a handful of parameters. <span class="step-lede-accent">The AI generates the pieces, sequences them, and proves the solution.</span></p>
+
+      <div class="setup-card">
+        <div class="setup-right">
+          <div class="solution-label">Final solution</div>
+          <div class="difficulty-readout difficulty-readout--outside">
+            <div class="dr-row">
+              <div class="dr-label">Difficulty</div>
+              <div class="dr-score"><span id="sdb-score">4.2</span><span class="dr-score-max">/ 10</span></div>
+            </div>
+            <div class="dr-bar"><div class="dr-bar-fill" id="sdb-bar-fill"></div></div>
+          </div>
+          <div class="phone-frame-wrap">
+            <div class="phone-frame">
+              <div class="phone-notch"></div>
+              <div class="phone-screen">
+                <div id="solution-view"></div>
+              </div>
+              <div class="phone-home"></div>
+            </div>
+          </div>
+          <div class="solution-caption" id="solution-caption">Pieces dealt in order, placed to clear the board.</div>
+        </div>
+
+        <div class="setup-left">
+          <div class="pipeline-head">
+            <div class="pipeline-icon">◈</div>
+            <div class="pipeline-num">01</div>
+          </div>
+          <div class="pipeline-name">Level Setup</div>
+          <div class="pipeline-desc">A level is a few parameters — number of solutions, rounds, square budgets. The AI turns them into pieces, an order, and a provable solution.</div>
+          <div class="card-actions">
+            <button class="card-btn card-btn--green" id="setup-method-btn">Methodology</button>
+            <button class="card-btn card-btn--blue" id="setup-settings-btn">Settings</button>
+          </div>
+
+          <div class="card-expand" id="setup-method-expand">
+            <div class="card-expand-inner card-expand-inner--green">
+              <div class="card-expand-label">How we digest a level</div>
+              <ul class="method-list">
+                <li><span class="method-key">Solutions</span><span class="method-val">How many distinct placement orders exist — fewer solutions = harder level</span></li>
+                <li><span class="method-key">Rounds</span><span class="method-val">How many deals the player must survive to complete the level</span></li>
+                <li><span class="method-key">Per round</span><span class="method-val">Min/max squares dealt each round — constrains per-turn density</span></li>
+                <li><span class="method-key">Total</span><span class="method-val">Min/max squares across the whole level — constrains pacing</span></li>
+                <li><span class="method-key">Output</span><span class="method-val">A piece sequence + a proven solved state on an 8×8 grid</span></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card-expand" id="setup-settings-expand">
+            <div class="card-expand-inner">
+              <div class="card-expand-label">Parameters</div>
+
+              <div class="param-row">
+                <div class="param-row-label">
+                  <span class="param-row-name">Solutions</span>
+                  <span class="param-row-hint">fewer = harder</span>
+                </div>
+                <div class="param-row-slider">
+                  <input type="range" class="param-slider" id="slider-solutions" min="1" max="10" value="2">
+                </div>
+                <div class="param-row-inputs">
+                  <input type="number" class="param-input" id="param-solutions" min="1" max="10" value="2">
+                </div>
+              </div>
+
+              <div class="param-row">
+                <div class="param-row-label">
+                  <span class="param-row-name">Rounds to survive</span>
+                  <span class="param-row-hint">deals to complete</span>
+                </div>
+                <div class="param-row-slider">
+                  <input type="range" class="param-slider" id="slider-rounds" min="1" max="10" value="3">
+                </div>
+                <div class="param-row-inputs">
+                  <input type="number" class="param-input" id="param-rounds" min="1" max="10" value="3">
+                </div>
+              </div>
+
+              <div class="param-row">
+                <div class="param-row-label">
+                  <span class="param-row-name">Squares per round</span>
+                  <span class="param-row-hint">min – max</span>
+                </div>
+                <div class="param-row-slider">
+                  <div class="range-dual" id="slider-sqr" data-min="1" data-max="15">
+                    <div class="range-track"><div class="range-fill"></div></div>
+                    <input type="range" min="1" max="15" value="3" class="range-min">
+                    <input type="range" min="1" max="15" value="6" class="range-max">
+                  </div>
+                </div>
+                <div class="param-row-inputs param-row-inputs--pair">
+                  <input type="number" class="param-input" id="param-sqr-min" min="1" max="15" value="3">
+                  <span class="param-dash">–</span>
+                  <input type="number" class="param-input" id="param-sqr-max" min="1" max="15" value="6">
+                </div>
+              </div>
+
+              <div class="param-row">
+                <div class="param-row-label">
+                  <span class="param-row-name">Total squares</span>
+                  <span class="param-row-hint">whole level · min – max</span>
+                </div>
+                <div class="param-row-slider">
+                  <div class="range-dual" id="slider-total" data-min="10" data-max="200">
+                    <div class="range-track"><div class="range-fill"></div></div>
+                    <input type="range" min="10" max="200" value="25" class="range-min">
+                    <input type="range" min="10" max="200" value="50" class="range-max">
+                  </div>
+                </div>
+                <div class="param-row-inputs param-row-inputs--pair">
+                  <input type="number" class="param-input" id="param-total-min" min="10" max="200" value="25">
+                  <span class="param-dash">–</span>
+                  <input type="number" class="param-input" id="param-total-max" min="10" max="200" value="50">
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-divider-line"></span>
+        <span class="section-divider-label">Part 2</span>
+        <span class="section-divider-line"></span>
+      </div>
+
+      <h2 class="step-subheading">Difficulty Curve</h2>
+      <p class="step-lede">Shape one loop of the game. Drag the anchors to carve the difficulty arc — the AI generates every level in the cycle to match.</p>
+
+      <div class="curve-layout">
+        <div class="curve-card">
+          <div class="curve-editor-wrap">
+            <div class="curve-ylabels">
+              <span>Very hard</span>
+              <span>Hard</span>
+              <span>Medium</span>
+              <span>Easy</span>
+              <span>Very easy</span>
+            </div>
+            <div class="curve-plot">
+              <svg id="curve-svg" viewBox="0 0 600 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="curve-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ef4444" stop-opacity="0.18"/>
+                    <stop offset="55%" stop-color="#f59e0b" stop-opacity="0.10"/>
+                    <stop offset="100%" stop-color="#10b981" stop-opacity="0.02"/>
+                  </linearGradient>
+                </defs>
+                <g id="curve-grid"></g>
+                <path id="curve-area" fill="url(#curve-grad)" stroke="none"/>
+                <path id="curve-path" fill="none" stroke="#00a1e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <g id="curve-anchors"></g>
+              </svg>
+              <div class="curve-xlabels">
+                <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>
+                <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span>
+              </div>
+            </div>
+          </div>
+          <div class="curve-legend">
+            <span class="legend-chip legend-chip--ve">Very easy</span>
+            <span class="legend-chip legend-chip--e">Easy</span>
+            <span class="legend-chip legend-chip--m">Medium</span>
+            <span class="legend-chip legend-chip--h">Hard</span>
+            <span class="legend-chip legend-chip--vh">Very hard</span>
+          </div>
+        </div>
+
+<div id="levels-grid" class="levels-grid" aria-live="polite"></div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-divider-line"></span>
+        <span class="section-divider-label">Part 3</span>
+        <span class="section-divider-line"></span>
+      </div>
+
+      <h2 class="step-subheading">Tracking &amp; Adjustment</h2>
+      <p class="step-lede">The AI says hard; the data says different. <span class="step-lede-accent">Every level emits starts, attempts, and wins — we compare observed difficulty against the curve and substitute levels that drift.</span></p>
+
+      <div class="tracking-head">
+        <div class="tracking-kpis">
+          <div class="kpi"><span class="kpi-val" id="kpi-plays">—</span><span class="kpi-lbl">Plays logged</span></div>
+          <div class="kpi"><span class="kpi-val" id="kpi-attempts">—</span><span class="kpi-lbl">Attempts</span></div>
+          <div class="kpi"><span class="kpi-val" id="kpi-winrate">—</span><span class="kpi-lbl">Avg win rate</span></div>
+          <div class="kpi"><span class="kpi-val kpi-val--warn" id="kpi-drift">—</span><span class="kpi-lbl">Levels off-target</span></div>
+        </div>
+        <div class="tracking-sim">
+          <span class="tracking-sim-label">Simulated plays</span>
+          <div class="seg-control seg-control--compact" id="sim-plays">
+            <button data-val="1000">1k</button>
+            <button data-val="10000" class="active">10k</button>
+            <button data-val="100000">100k</button>
+          </div>
+          <button id="substitute-all-btn" class="generate-btn generate-btn--compact">Substitute drifting ▸</button>
+        </div>
+      </div>
+
+      <div class="tracking-layout">
+        <div class="tracking-card">
+          <div class="tracking-card-head">
+            <div class="tracking-card-title">Intended vs observed difficulty</div>
+            <div class="tracking-card-sub">Dashed = the curve you set. Solid = what the data says.</div>
+          </div>
+          <svg id="tracking-svg" viewBox="0 0 600 240" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="observed-grad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.14"/>
+                <stop offset="55%" stop-color="#f59e0b" stop-opacity="0.08"/>
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <g id="tracking-grid"></g>
+            <path id="tracking-observed-area" fill="url(#observed-grad)" stroke="none"/>
+            <path id="tracking-target-path" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4 4"/>
+            <path id="tracking-observed-path" fill="none" stroke="#00a1e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g id="tracking-deltas"></g>
+            <g id="tracking-observed-dots"></g>
+          </svg>
+          <div class="tracking-legend">
+            <span><span class="ln ln--target"></span>Intended</span>
+            <span><span class="ln ln--observed"></span>Observed</span>
+            <span><span class="ln ln--drift"></span>Drift</span>
+          </div>
+        </div>
+
+        <div class="tracking-table">
+          <div class="tt-row tt-row--head">
+            <span>Lv</span>
+            <span>Bucket</span>
+            <span>Plays</span>
+            <span>Win %</span>
+            <span>Avg tries</span>
+            <span>Target</span>
+            <span>Observed</span>
+            <span>Δ</span>
+            <span></span>
+          </div>
+          <div id="tt-rows"></div>
+        </div>
+      </div>
     </section>
 
-    <!-- STEP 3 (placeholder) -->
+    <!-- STEP 3 (Economy — configurator) -->
     <section class="step-view" data-step="3">
       <div class="step-eyebrow">Step 3</div>
-      <h2 class="step-heading">Coming soon</h2>
-    </section>
+      <h2 class="step-heading">Economy</h2>
+      <p class="step-lede">Parameters in, economy out. <span class="step-lede-accent">Tick the currencies, boosters, and faucets — the AI assembles a coherent economy from your selection and the player screens rebuild in place.</span></p>
 
-    <!-- STEP 4 (placeholder) -->
-    <section class="step-view" data-step="4">
-      <div class="step-eyebrow">Step 4</div>
-      <h2 class="step-heading">Coming soon</h2>
-    </section>
+      <div class="econ-topbar">
+        <div class="econ-presets">
+          <span class="econ-presets-label">Preset</span>
+          <button class="econ-preset-btn" data-preset="minimal">Minimal</button>
+          <button class="econ-preset-btn" data-preset="standard">Standard</button>
+          <button class="econ-preset-btn" data-preset="liveops">Live-Ops</button>
+          <button class="econ-preset-btn" data-preset="full">Full</button>
+        </div>
+        <button id="econ-generate-btn" class="generate-btn">Generate economy ▸</button>
+      </div>
 
+      <!-- SECTION A: Currencies + Boosters | Gameplay phone -->
+      <h2 class="step-subheading econ-section-heading">Currencies &amp; Boosters</h2>
+      <p class="step-lede">What the player holds and can spend. <span class="step-lede-accent">Every ticked currency appears in the HUD; every ticked booster lands in the bottom tray.</span></p>
+
+      <div class="econ-section econ-section--a">
+        <div class="econ-col">
+          <div class="econ-col-head">
+            <span class="econ-col-badge econ-col-badge--def">DEFINE</span>
+            <span class="econ-col-title">Currencies</span>
+          </div>
+          <div class="econ-items" data-group="currencies"></div>
+        </div>
+
+        <div class="econ-col">
+          <div class="econ-col-head">
+            <span class="econ-col-badge econ-col-badge--def">DEFINE</span>
+            <span class="econ-col-title">Boosters</span>
+          </div>
+          <div class="econ-items" data-group="boosters"></div>
+        </div>
+
+        <div class="econ-phone econ-phone--side">
+          <div class="econ-phone-label">Gameplay</div>
+          <div class="econ-phone-frame">
+            <div class="econ-phone-notch"></div>
+            <div class="econ-phone-screen phone-screen--refined" id="preview-gameplay"></div>
+            <div class="econ-phone-home"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-divider-line"></span>
+        <span class="section-divider-label">Part 2</span>
+        <span class="section-divider-line"></span>
+      </div>
+
+      <!-- SECTION B: Faucets | Level Complete phone -->
+      <h2 class="step-subheading econ-section-heading">How players gain</h2>
+      <p class="step-lede">Where coins, gems, and boosters enter the wallet. <span class="step-lede-accent">The level-complete screen mirrors the faucets you enable — level rewards, rewarded-ad multipliers, milestone drops, and the bonus wheel.</span></p>
+
+      <div class="econ-section econ-section--b">
+        <div class="econ-col">
+          <div class="econ-col-head">
+            <span class="econ-col-badge econ-col-badge--in">FAUCETS</span>
+            <span class="econ-col-title">What enters the wallet</span>
+          </div>
+          <div class="econ-items" data-group="faucets"></div>
+        </div>
+
+        <div class="econ-phone econ-phone--side">
+          <div class="econ-phone-label">Level complete</div>
+          <div class="econ-phone-frame">
+            <div class="econ-phone-notch"></div>
+            <div class="econ-phone-screen phone-screen--refined" id="preview-endgame"></div>
+            <div class="econ-phone-home"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="econ-summary" id="econ-summary">
+        <div class="econ-summary-counts">
+          <div class="econ-stat"><span class="econ-stat-val" id="econ-count-curr">—</span><span class="econ-stat-lbl">Currencies</span></div>
+          <div class="econ-stat"><span class="econ-stat-val" id="econ-count-boost">—</span><span class="econ-stat-lbl">Boosters</span></div>
+          <div class="econ-stat"><span class="econ-stat-val" id="econ-count-fauc">—</span><span class="econ-stat-lbl">Faucets</span></div>
+        </div>
+        <div class="econ-summary-text" id="econ-summary-text">Pick a preset or generate to see the assembled economy.</div>
+      </div>
+
+      <div class="section-divider">
+        <span class="section-divider-line"></span>
+        <span class="section-divider-label">Part 3</span>
+        <span class="section-divider-line"></span>
+      </div>
+
+      <h2 class="step-subheading">Economy Tuning</h2>
+      <p class="step-lede">Now we balance it. <span class="step-lede-accent">Set earn and spend per level. The AI simulates the wallet across 50 levels and shows exactly where the player runs dry — the checkpoints where ads and IAP convert.</span></p>
+
+      <div class="econ-topbar">
+        <div class="econ-presets">
+          <span class="econ-presets-label">Preset</span>
+          <button class="et-preset-btn" data-preset="generous">Generous</button>
+          <button class="et-preset-btn" data-preset="balanced">Balanced</button>
+          <button class="et-preset-btn" data-preset="grindy">Grindy</button>
+        </div>
+        <div class="et-topbar-actions">
+          <button id="et-randomize-btn" class="randomize-btn" type="button" aria-pressed="false">Randomize: off</button>
+          <button id="et-generate-btn" class="generate-btn">Generate tuning ▸</button>
+        </div>
+      </div>
+
+      <!-- Global tuning -->
+      <div class="et-global-card">
+        <div class="et-global-title">Global</div>
+        <div class="et-global-row">
+          <div class="et-param">
+            <label class="et-param-label">Checkpoint every <span class="et-info" title="How often a hard checkpoint lands in the progression. Checkpoints are the levels where the player is meant to drain their wallet — the moment ads and IAP convert.">i</span></label>
+            <input type="range" class="et-slider" data-p="checkpoint" min="5" max="20" step="1" value="10">
+            <span class="et-param-val"><span data-v="checkpoint">10</span> levels</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Earn decay over <span class="et-info" title="How many levels it takes for earn rates to slide from their day-1 value down to their day-N value. Longer decay = gentler grind ramp.">i</span></label>
+            <input type="range" class="et-slider" data-p="decay" min="5" max="50" step="1" value="20">
+            <span class="et-param-val"><span data-v="decay">20</span> levels</span>
+          </div>
+        </div>
+        <div class="et-stats">
+          <div class="et-stat"><span class="et-stat-val" id="et-coin-dry">—</span><span class="et-stat-lbl">Coins dry at</span></div>
+          <div class="et-stat"><span class="et-stat-val" id="et-gem-dry">—</span><span class="et-stat-lbl">Gems dry at</span></div>
+          <div class="et-stat"><span class="et-stat-val" id="et-coin-total">—</span><span class="et-stat-lbl">Net coin flow</span></div>
+          <div class="et-stat"><span class="et-stat-val" id="et-gem-total">—</span><span class="et-stat-lbl">Net gem flow</span></div>
+        </div>
+      </div>
+
+      <!-- Coins row -->
+      <h2 class="step-subheading et-currency-heading"><span class="et-cur-badge et-cur-badge--coin">🪙</span> Coins</h2>
+      <p class="step-lede">Soft currency — earned each level, spent on retries and boosters. <span class="step-lede-accent">The wallet should graze zero at every checkpoint.</span></p>
+
+      <div class="et-section">
+        <div class="et-params-card">
+          <div class="et-param">
+            <label class="et-param-label">Starting wallet <span class="et-info" title="Coins the player owns at level 1. A generous starting wallet lets early levels feel frictionless; a tight one pushes conversion sooner.">i</span></label>
+            <input type="range" class="et-slider et-slider--coin" data-c="coin" data-p="start" min="0" max="2000" step="50" value="500">
+            <span class="et-param-val"><span data-cv="coin:start">500</span> 🪙</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Earn / level · day 1 <span class="et-info" title="Coins rewarded per level completion early in the player journey. Higher values make the first sessions feel rich with currency.">i</span></label>
+            <input type="range" class="et-slider et-slider--coin" data-c="coin" data-p="earnStart" min="10" max="500" step="10" value="100">
+            <span class="et-param-val"><span data-cv="coin:earnStart">100</span> 🪙</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Earn / level · day N <span class="et-info" title="Coins rewarded per level after the earn curve has fully decayed. This is the long-term steady-state faucet.">i</span></label>
+            <input type="range" class="et-slider et-slider--coin" data-c="coin" data-p="earnEnd" min="10" max="500" step="10" value="50">
+            <span class="et-param-val"><span data-cv="coin:earnEnd">50</span> 🪙</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Spend / level (avg) <span class="et-info" title="Average coins the player sinks per level on retries, boosters, and conveniences. The baseline drain against the earn faucet.">i</span></label>
+            <input type="range" class="et-slider et-slider--coin" data-c="coin" data-p="spend" min="0" max="500" step="10" value="70">
+            <span class="et-param-val"><span data-cv="coin:spend">70</span> 🪙</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Checkpoint spike <span class="et-info" title="Extra coins drained at each checkpoint — the hard levels where players burn their stash. Larger spikes = sharper conversion moments.">i</span></label>
+            <input type="range" class="et-slider et-slider--coin" data-c="coin" data-p="spike" min="0" max="1000" step="25" value="300">
+            <span class="et-param-val"><span data-cv="coin:spike">300</span> 🪙</span>
+          </div>
+        </div>
+        <div class="et-chart-card">
+          <div class="et-chart-head">
+            <span class="et-chart-title">Coin wallet across 50 levels</span>
+            <span class="et-chart-sub">Vertical markers = checkpoints. Zero-line = dry.</span>
+          </div>
+          <div class="et-chart-plot">
+            <div class="et-chart-ylabels" data-ylabels></div>
+            <svg class="et-chart" id="et-coin-chart" viewBox="0 0 600 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="et-coin-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <g class="et-chart-grid"></g>
+              <g class="et-chart-checkpoints"></g>
+              <path class="et-chart-area" fill="url(#et-coin-grad)" stroke="none"/>
+              <line class="et-chart-zero" x1="0" y1="0" x2="600" y2="0" stroke="rgba(239,68,68,0.6)" stroke-width="1" stroke-dasharray="4 4"/>
+              <path class="et-chart-line" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <g class="et-chart-dry-dots"></g>
+              <g class="et-chart-xaxis"></g>
+              <g class="et-chart-yaxis"></g>
+            </svg>
+            <div class="et-chart-xlabels" data-xlabels></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gems row -->
+      <h2 class="step-subheading et-currency-heading"><span class="et-cur-badge et-cur-badge--gem">💎</span> Gems</h2>
+      <p class="step-lede">Premium currency — sparse earn, high-value spend. <span class="step-lede-accent">Dry moments here are when IAP converts.</span></p>
+
+      <div class="et-section">
+        <div class="et-params-card">
+          <div class="et-param">
+            <label class="et-param-label">Starting wallet <span class="et-info" title="Gems the player is granted at level 1. Higher values give early players a taste of premium features before the currency becomes scarce.">i</span></label>
+            <input type="range" class="et-slider et-slider--gem" data-c="gem" data-p="start" min="0" max="300" step="5" value="50">
+            <span class="et-param-val"><span data-cv="gem:start">50</span> 💎</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Earn / level · day 1 <span class="et-info" title="Gems awarded per level completion early on. Gems are meant to feel rare — keep this low to preserve their perceived value.">i</span></label>
+            <input type="range" class="et-slider et-slider--gem" data-c="gem" data-p="earnStart" min="0" max="30" step="1" value="5">
+            <span class="et-param-val"><span data-cv="gem:earnStart">5</span> 💎</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Earn / level · day N <span class="et-info" title="Gems awarded per level after the earn curve has decayed. The long-term trickle that defines how often the player runs out.">i</span></label>
+            <input type="range" class="et-slider et-slider--gem" data-c="gem" data-p="earnEnd" min="0" max="30" step="1" value="2">
+            <span class="et-param-val"><span data-cv="gem:earnEnd">2</span> 💎</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Spend / level (avg) <span class="et-info" title="Average gems spent per level on continues and premium boosters. The steady drain that slowly drags the wallet toward zero.">i</span></label>
+            <input type="range" class="et-slider et-slider--gem" data-c="gem" data-p="spend" min="0" max="30" step="1" value="3">
+            <span class="et-param-val"><span data-cv="gem:spend">3</span> 💎</span>
+          </div>
+          <div class="et-param">
+            <label class="et-param-label">Checkpoint spike <span class="et-info" title="Extra gems drained at each checkpoint. This is the IAP moment — when the wallet hits zero, the store prompt converts.">i</span></label>
+            <input type="range" class="et-slider et-slider--gem" data-c="gem" data-p="spike" min="0" max="100" step="5" value="30">
+            <span class="et-param-val"><span data-cv="gem:spike">30</span> 💎</span>
+          </div>
+        </div>
+        <div class="et-chart-card">
+          <div class="et-chart-head">
+            <span class="et-chart-title">Gem wallet across 50 levels</span>
+            <span class="et-chart-sub">Dry = IAP moment.</span>
+          </div>
+          <div class="et-chart-plot">
+            <div class="et-chart-ylabels" data-ylabels></div>
+            <svg class="et-chart" id="et-gem-chart" viewBox="0 0 600 220" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="et-gem-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.35"/>
+                  <stop offset="100%" stop-color="#00a1e1" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <g class="et-chart-grid"></g>
+              <g class="et-chart-checkpoints"></g>
+              <path class="et-chart-area" fill="url(#et-gem-grad)" stroke="none"/>
+              <line class="et-chart-zero" x1="0" y1="0" x2="600" y2="0" stroke="rgba(239,68,68,0.6)" stroke-width="1" stroke-dasharray="4 4"/>
+              <path class="et-chart-line" fill="none" stroke="#00a1e1" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <g class="et-chart-dry-dots"></g>
+              <g class="et-chart-xaxis"></g>
+              <g class="et-chart-yaxis"></g>
+            </svg>
+            <div class="et-chart-xlabels" data-xlabels></div>
+          </div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="app.js"></script>
