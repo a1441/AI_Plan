@@ -838,6 +838,7 @@ document.querySelectorAll('.step-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     if (btn.dataset.step === '2') { Step2.init(); DifficultyCurve.init(); Step3.init(); }
     if (btn.dataset.step === '3') { Economy.init(); EconomyTuning.init(); }
+    if (btn.dataset.step === '4') { Monetization.init(); }
   });
 });
 
@@ -2049,8 +2050,8 @@ const EconomyTuning = {
     });
     const coinData = this.simulate('coin');
     const gemData  = this.simulate('gem');
-    this.renderChart('et-coin-chart', coinData, '#f59e0b', 5000);
-    this.renderChart('et-gem-chart',  gemData,  '#00a1e1', 1000);
+    this.renderChart('et-coin-chart', coinData, '#f59e0b', 10000);
+    this.renderChart('et-gem-chart',  gemData,  '#00a1e1', 1500);
     this.updateStats(coinData, gemData);
   },
 
@@ -2196,3 +2197,1457 @@ const EconomyTuning = {
     setStat('et-gem-total',  fmtNet(gemNet,  '💎'), gemNet  >= 0 ? 'et-stat-val--ok' : 'et-stat-val--warn');
   },
 };
+
+// ============================================================
+// MONETIZATION (Step 4) — Ads + IAPs
+// ============================================================
+const Monetization = {
+  _started: false,
+  state: {
+    activeTab: 'ads',
+    ads: {
+      enabled: { banner: true, interstitial: true, rewarded: true },
+      banner: {
+        position: 'bottom',      // 'bottom' | 'top' | 'middle'
+        visibility: 'persistent', // 'persistent' | 'levels'
+        levelRange: '5-20, 40+',
+      },
+      interstitial: {
+        placements: {
+          app_start: false, level_start: false, level_finish: true, level_lose: true,
+          level_win: false, during_level: false, main_menu: false, shop: false,
+        },
+        cadenceMode: 'levels', // 'levels' | 'minutes'
+        cadenceLevels: 2,
+        cadenceMinutes: 2,
+      },
+      rv: {
+        placements: {
+          daily_reward: true, double_level: true, double_levelup: false,
+          shop_reroll: false, coins_diamonds: false, placement_boost: false,
+          lives_refresh: true, spin_wheel: false,
+        },
+        pausesInterstitials: true,
+      },
+      estimate: {
+        dau: 50000,
+        metric: 'imp_per_dau', // 'imp_per_dau' | 'ecpm' | 'arpu'
+      },
+    },
+    iaps: {
+      skus: [
+        { price: 0.99,  contents: '500 🪙',                featured: false },
+        { price: 4.99,  contents: '3,000 🪙 + 10 💎',       featured: true  },
+        { price: 9.99,  contents: '7,000 🪙 + 25 💎',       featured: false },
+        { price: 99.99, contents: 'Whale bundle',           featured: false },
+      ],
+      anchorPrice: 'featured', // 'cheapest' | 'featured' | 'expensive'
+      starterEnabled: true,
+      starterDiscount: 40,
+      starterTrigger: 'session3', // 'first_launch' | 'session3' | 'first_loss'
+      offerEnabled: true,
+      offerCooldown: 48,
+      offerTypes: { coin_gem: true, booster: true, cosmetic: false, whale: false },
+      estimate: {
+        dau: 50000,
+        metric: 'funnel', // 'funnel' | 'revenue_by_sku' | 'arpdau_vs_dau'
+      },
+    },
+  },
+
+  init() {
+    if (this._started) return;
+    this._started = true;
+    this.bindTabs();
+    this.bindAdsConfigurator();
+    this.bindIapsConfigurator();
+    this.renderSkuTable();
+    this.bindGenerate();
+    this.updateBannerPreview();
+    this.updateInterPreview();
+    this.updateRvPreview();
+    this.renderEstimate();
+    this.bindEstimateHover();
+    this.renderShopPreview();
+    this.renderStarterPreview();
+    this.renderOfferPreview();
+    this.renderIapEstimate();
+    this.bindIapEstimateHover();
+    // Re-render charts on resize so pixel-matched viewBoxes stay crisp.
+    if (!this._resizeBound) {
+      this._resizeBound = true;
+      let raf;
+      window.addEventListener('resize', () => {
+        if (raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => { this.renderEstimate(); this.renderIapEstimate(); });
+      });
+    }
+  },
+
+  _svgDims(svg) {
+    const r = svg.getBoundingClientRect();
+    const w = Math.max(100, Math.round(r.width));
+    const h = Math.max(60, Math.round(r.height));
+    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+    return { w, h };
+  },
+
+  bindTabs() {
+    document.querySelectorAll('.mon-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const which = btn.dataset.mtab;
+        this.state.activeTab = which;
+        document.querySelectorAll('.mon-tab-btn').forEach(b => {
+          const on = b.dataset.mtab === which;
+          b.classList.toggle('active', on);
+          b.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        document.querySelectorAll('.mon-panel').forEach(p => {
+          p.classList.toggle('active', p.dataset.mpanel === which);
+        });
+      });
+    });
+  },
+
+  bindAdsConfigurator() {
+    const onChange = () => { this.renderEstimate(); };
+
+    // Card enable checkboxes
+    document.querySelectorAll('.ads-enable').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const f = cb.dataset.f;
+        this.state.ads.enabled[f] = cb.checked;
+        const card = cb.closest('.ads-card');
+        if (card) card.classList.toggle('ads-card--off', !cb.checked);
+        onChange();
+      });
+    });
+
+    // BANNER
+    document.querySelectorAll('input[name="bannerPos"]').forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          this.state.ads.banner.position = r.value;
+          this.updateBannerPreview();
+          onChange();
+        }
+      });
+    });
+    document.querySelectorAll('input[name="bannerVis"]').forEach(r => {
+      r.addEventListener('change', () => {
+        if (!r.checked) return;
+        this.state.ads.banner.visibility = r.value;
+        const rangeWrap = document.getElementById('ads-banner-levels');
+        if (rangeWrap) rangeWrap.hidden = r.value !== 'levels';
+        this.updateBannerPreview();
+        onChange();
+      });
+    });
+    const levelInput = document.getElementById('ads-banner-level-range');
+    if (levelInput) {
+      levelInput.addEventListener('input', () => {
+        this.state.ads.banner.levelRange = levelInput.value;
+      });
+    }
+
+    // INTERSTITIAL
+    document.querySelectorAll('[data-group="interPlacements"] input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        this.state.ads.interstitial.placements[cb.dataset.p] = cb.checked;
+        this.updateInterPreview();
+        onChange();
+      });
+    });
+    document.querySelectorAll('input[name="interCadence"]').forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          this.state.ads.interstitial.cadenceMode = r.value;
+          this.updateInterPreview();
+          onChange();
+        }
+      });
+    });
+    const cadLevels = document.getElementById('ads-cadence-levels');
+    if (cadLevels) {
+      cadLevels.addEventListener('input', () => {
+        const v = Math.max(1, parseInt(cadLevels.value, 10) || 1);
+        this.state.ads.interstitial.cadenceLevels = v;
+        this.updateInterPreview();
+        onChange();
+      });
+    }
+    const cadMinutes = document.getElementById('ads-cadence-minutes');
+    if (cadMinutes) {
+      cadMinutes.addEventListener('input', () => {
+        const v = Math.max(1, parseInt(cadMinutes.value, 10) || 1);
+        this.state.ads.interstitial.cadenceMinutes = v;
+        this.updateInterPreview();
+        onChange();
+      });
+    }
+
+    // RV
+    document.querySelectorAll('[data-group="rvPlacements"] input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        this.state.ads.rv.placements[cb.dataset.p] = cb.checked;
+        this.updateRvPreview();
+        onChange();
+      });
+    });
+    const rvPauses = document.getElementById('ads-rv-pauses');
+    if (rvPauses) {
+      rvPauses.addEventListener('change', () => {
+        this.state.ads.rv.pausesInterstitials = rvPauses.checked;
+        onChange();
+      });
+    }
+
+    // ESTIMATE — DAU chips
+    document.querySelectorAll('#ads-dau-chips .ads-dau-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.dau;
+        document.querySelectorAll('#ads-dau-chips .ads-dau-chip').forEach(c => c.classList.toggle('active', c === chip));
+        const customInput = document.getElementById('ads-dau-custom');
+        if (value === 'custom') {
+          if (customInput) {
+            customInput.hidden = false;
+            customInput.focus();
+          }
+        } else {
+          if (customInput) customInput.hidden = true;
+          this.state.ads.estimate.dau = parseInt(value, 10);
+          this.renderEstimate();
+        }
+      });
+    });
+    const customInput = document.getElementById('ads-dau-custom');
+    if (customInput) {
+      customInput.addEventListener('input', () => {
+        const v = Math.max(1000, parseInt(customInput.value, 10) || 1000);
+        this.state.ads.estimate.dau = v;
+        this.renderEstimate();
+      });
+    }
+
+    // ESTIMATE — metric tabs (scoped to ads panel only)
+    document.querySelectorAll('.mon-panel[data-mpanel="ads"] .ads-metric-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const metric = tab.dataset.metric;
+        this.state.ads.estimate.metric = metric;
+        document.querySelectorAll('.mon-panel[data-mpanel="ads"] .ads-metric-tab').forEach(t => {
+          const on = t.dataset.metric === metric;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        this.renderEstimate();
+      });
+    });
+
+  },
+
+  updateBannerPreview() {
+    const mock = document.querySelector('#ads-preview-banner .ads-banner-mock');
+    const card = document.querySelector('.ads-card--banner');
+    if (!mock || !card) return;
+    const { position, visibility } = this.state.ads.banner;
+    const enabled = this.state.ads.enabled.banner;
+    mock.dataset.pos = position;
+    mock.classList.toggle('ads-hidden', !enabled);
+    mock.textContent = visibility === 'levels' ? 'Banner (lv 5-20)' : 'Banner ad';
+  },
+
+  updateInterPreview() {
+    const caption = document.getElementById('ads-inter-caption');
+    if (!caption) return;
+    const { placements, cadenceMode, cadenceLevels, cadenceMinutes } = this.state.ads.interstitial;
+    const labels = {
+      app_start: 'App start', level_start: 'Level start', level_finish: 'Level finish',
+      level_lose: 'Level lose', level_win: 'Level win', during_level: 'During level',
+      main_menu: 'Main menu', shop: 'Shop', custom: 'Custom',
+    };
+    const active = Object.keys(placements).filter(k => placements[k]).map(k => labels[k]);
+    const cadenceText = cadenceMode === 'levels'
+      ? `every ${cadenceLevels} level${cadenceLevels === 1 ? '' : 's'}`
+      : `every ${cadenceMinutes} min${cadenceMinutes === 1 ? '' : 's'}`;
+    caption.textContent = active.length
+      ? `Fires on: ${active.join(', ')} · ${cadenceText}`
+      : `No placements selected · ${cadenceText}`;
+  },
+
+  updateRvPreview() {
+    const title = document.getElementById('ads-rv-title');
+    if (!title) return;
+    const { placements } = this.state.ads.rv;
+    const labels = {
+      daily_reward: 'Daily reward', double_level: 'Double level reward',
+      double_levelup: 'Double level-up', shop_reroll: 'Shop reroll',
+      coins_diamonds: 'Coins → Diamonds', placement_boost: 'Placement boost',
+      lives_refresh: 'Lives refresh', spin_wheel: 'Spin the wheel',
+      custom: 'Custom',
+    };
+    const first = Object.keys(placements).find(k => placements[k]);
+    title.textContent = first ? labels[first] : 'Rewarded video';
+  },
+
+  pulseEstimateBtn() {
+    const btn = document.getElementById('ads-estimate-btn');
+    if (!btn) return;
+    btn.classList.remove('pulse');
+    void btn.offsetWidth;
+    btn.classList.add('pulse');
+  },
+
+  // ---------- Estimate model ----------
+  estimateAdsPerFormat() {
+    const { enabled, banner, interstitial, rv } = this.state.ads;
+    // Per-format impressions per DAU per day (deterministic model).
+    const SESSIONS_PER_DAY = 3.2;
+
+    // Banner: persistent = more impressions; "specific levels" = ~50% less (coverage).
+    const bannerBaseImpr = banner.visibility === 'persistent' ? 22 : 11;
+    // Middle overlay is more intrusive → slightly higher eCPM but capped impressions.
+    const bannerEcpm = banner.position === 'middle' ? 0.9 : 0.35;
+    const banIpd = enabled.banner ? bannerBaseImpr : 0;
+
+    // Interstitial: impressions driven by placement count + cadence.
+    const interPlacementCount = Object.values(interstitial.placements).filter(Boolean).length;
+    const triggersPerSession = Math.min(6, interPlacementCount * 0.9);
+    let cadenceFactor;
+    if (interstitial.cadenceMode === 'levels') {
+      cadenceFactor = 1 / Math.max(1, interstitial.cadenceLevels);
+    } else {
+      cadenceFactor = 1 / Math.max(1, interstitial.cadenceMinutes * 0.7);
+    }
+    let interIpd = enabled.interstitial ? SESSIONS_PER_DAY * triggersPerSession * cadenceFactor * 2.5 : 0;
+    // RV pauses interstitials — ~25% suppression when enabled and RV active.
+    if (enabled.interstitial && enabled.rewarded && rv.pausesInterstitials) {
+      interIpd *= 0.75;
+    }
+    const interEcpm = 8.5;
+
+    // RV: impressions driven by placements × engagement.
+    const rvPlacementCount = Object.values(rv.placements).filter(Boolean).length;
+    const rvEngageRate = 0.42;
+    const rvIpd = enabled.rewarded ? Math.min(5, rvPlacementCount * rvEngageRate) : 0;
+    const rvEcpm = 15;
+
+    return {
+      banner: { impr: banIpd, ecpm: bannerEcpm },
+      interstitial: { impr: interIpd, ecpm: interEcpm },
+      rv: { impr: rvIpd, ecpm: rvEcpm },
+    };
+  },
+
+  buildEstimateSeries() {
+    const { dau } = this.state.ads.estimate;
+    const perFormat = this.estimateAdsPerFormat();
+    const DAYS = 30;
+    const formats = ['banner', 'interstitial', 'rv'];
+    // Saturating LTV-style curve: fast ramp by ~d7, slow growth till d30. Monotonically increasing.
+    // Different tau per format → curves saturate at different rates for visual split.
+    const tauMap = { banner: 2.2, interstitial: 3.5, rv: 5.0 };
+    const baselineMap = { banner: 0.35, interstitial: 0.28, rv: 0.22 };
+    const engageFactor = (d, f) => {
+      const b = baselineMap[f];
+      return b + (1 - b) * (1 - Math.exp(-d / tauMap[f]));
+    };
+    // eCPM also warms up as targeting + frequency data improves; same saturating shape, gentler spread.
+    const ecpmFactor = (d, f) => 0.7 + 0.3 * (1 - Math.exp(-d / (tauMap[f] * 1.2)));
+
+    const series = {};
+    formats.forEach(f => {
+      const { impr, ecpm } = perFormat[f];
+      const impPerDau = []; // impressions per DAU per day
+      const ecpmArr = [];
+      const arpu = [];     // revenue per user per day
+      for (let d = 0; d < DAYS; d++) {
+        const ipd = impr * engageFactor(d, f);
+        const ecpmDay = ecpm * ecpmFactor(d, f);
+        const arpuDay = (ipd * ecpmDay) / 1000;
+        impPerDau.push(ipd);
+        ecpmArr.push(ecpmDay);
+        arpu.push(arpuDay);
+      }
+      series[f] = { imp_per_dau: impPerDau, ecpm: ecpmArr, arpu };
+    });
+    // Totals: sum per-DAU impressions + ARPU across formats; blended eCPM is revenue-weighted.
+    const total = { imp_per_dau: [], ecpm: [], arpu: [] };
+    for (let d = 0; d < DAYS; d++) {
+      const ti = formats.reduce((a, f) => a + series[f].imp_per_dau[d], 0);
+      const ta = formats.reduce((a, f) => a + series[f].arpu[d], 0);
+      const blended = ti > 0 ? (ta * 1000) / ti : 0;
+      total.imp_per_dau.push(ti);
+      total.arpu.push(ta);
+      total.ecpm.push(blended);
+    }
+    return { series, total, dau, perFormat };
+  },
+
+  renderEstimate() {
+    const svg = document.getElementById('ads-estimate-chart');
+    if (!svg) return;
+    const { metric } = this.state.ads.estimate;
+    const { series, total, dau } = this.buildEstimateSeries();
+
+    const padL = 44, padR = 16, padTop = 12, padBot = 24;
+    const { w: VB_W, h: VB_H } = this._svgDims(svg);
+    const FORMATS = [
+      { key: 'banner', color: '#00a1e1', grad: 'url(#ads-est-grad-banner)', label: 'Banner' },
+      { key: 'interstitial', color: '#f59e0b', grad: 'url(#ads-est-grad-inter)', label: 'Interstitial' },
+      { key: 'rv', color: '#10b981', grad: 'url(#ads-est-grad-rv)', label: 'Rewarded' },
+    ];
+
+    // All metrics render as per-format split (daily curves).
+    const perFormatView = true;
+    const days = total.imp_per_dau.length;
+    const xAt = (i) => padL + (i / (days - 1)) * (VB_W - padL - padR);
+
+    // Compute maxV
+    let maxV = 0;
+    if (perFormatView) {
+      FORMATS.forEach(f => {
+        series[f.key][metric].forEach(v => { if (v > maxV) maxV = v; });
+      });
+    } else {
+      total[metric].forEach(v => { if (v > maxV) maxV = v; });
+    }
+    maxV = Math.max(maxV * 1.15, 0.0001);
+    const yAt = (v) => padTop + (1 - v / maxV) * (VB_H - padTop - padBot);
+
+    const buildPath = (arr) => {
+      let p = `M ${xAt(0).toFixed(1)} ${yAt(arr[0]).toFixed(1)}`;
+      for (let i = 1; i < arr.length; i++) p += ` L ${xAt(i).toFixed(1)} ${yAt(arr[i]).toFixed(1)}`;
+      return p;
+    };
+    const buildArea = (arr) => {
+      const line = buildPath(arr);
+      return `${line} L ${xAt(arr.length - 1).toFixed(1)} ${(VB_H - padBot).toFixed(1)} L ${xAt(0).toFixed(1)} ${(VB_H - padBot).toFixed(1)} Z`;
+    };
+
+    // Gridlines
+    const gridGroup = svg.querySelector('.et-chart-grid');
+    if (gridGroup) {
+      let g = '';
+      for (let i = 0; i <= 4; i++) {
+        const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+        g += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${VB_W - padR}" y2="${yy.toFixed(1)}" stroke="rgba(22,27,37,0.08)" stroke-width="1" stroke-dasharray="${i === 4 ? '0' : '3,4'}" vector-effect="non-scaling-stroke"/>`;
+      }
+      gridGroup.innerHTML = g;
+    }
+
+    // Render series
+    const seriesGroup = svg.querySelector('.ads-est-series');
+    if (!seriesGroup) return;
+    let html = '';
+    if (perFormatView) {
+      FORMATS.forEach(f => {
+        const arr = series[f.key][metric];
+        html += `<path d="${buildArea(arr)}" fill="${f.grad}" stroke="none"/>`;
+        html += `<path d="${buildPath(arr)}" fill="none" stroke="${f.color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+      });
+    } else {
+      const color = metric === 'revenue' ? '#10b981' : '#00a1e1';
+      const grad = metric === 'revenue' ? 'url(#ads-est-grad-rv)' : 'url(#ads-est-grad-banner)';
+      const arr = total[metric];
+      html += `<path d="${buildArea(arr)}" fill="${grad}" stroke="none"/>`;
+      html += `<path d="${buildPath(arr)}" fill="none" stroke="${color}" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+    }
+    // Baseline
+    html += `<line x1="${padL}" y1="${VB_H - padBot}" x2="${VB_W - padR}" y2="${VB_H - padBot}" stroke="rgba(22,27,37,0.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    seriesGroup.innerHTML = html;
+
+    // X labels (every 5 days)
+    const xLabelsWrap = svg.parentElement.querySelector('[data-xlabels]');
+    if (xLabelsWrap) {
+      const parts = [];
+      for (let d = 0; d < days; d += 5) {
+        const pct = ((xAt(d) / VB_W) * 100).toFixed(2);
+        parts.push(`<span style="left:${pct}%">D${d + 1}</span>`);
+      }
+      xLabelsWrap.innerHTML = parts.join('');
+    }
+
+    // Y labels
+    const yLabelsWrap = svg.parentElement.querySelector('[data-ylabels]');
+    if (yLabelsWrap) {
+      const fmt = this.formatMetric.bind(this);
+      const parts = [];
+      for (let i = 0; i <= 4; i++) {
+        const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+        const v = maxV - (maxV * i / 4);
+        const pct = ((yy / VB_H) * 100).toFixed(2);
+        parts.push(`<span style="top:${pct}%">${fmt(v, metric)}</span>`);
+      }
+      yLabelsWrap.innerHTML = parts.join('');
+    }
+
+    // Legend
+    const legend = document.getElementById('ads-estimate-legend');
+    if (legend) {
+      if (perFormatView) {
+        legend.innerHTML = FORMATS.map(f => {
+          const enabled = this.state.ads.enabled[f.key === 'rv' ? 'rewarded' : f.key];
+          const opacity = enabled ? '1' : '0.4';
+          return `<span class="ads-legend-item" style="opacity:${opacity}"><span class="ads-legend-swatch" style="background:${f.color}"></span>${f.label}</span>`;
+        }).join('');
+      } else {
+        legend.innerHTML = `<span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${metric === 'revenue' ? '#10b981' : '#00a1e1'}"></span>Total ${metric === 'revenue' ? 'revenue' : 'ARPDAU'}</span>`;
+      }
+    }
+
+    // Stats — averages across the 30-day window.
+    const avg = (arr) => arr.reduce((a, b) => a + b, 0) / Math.max(arr.length, 1);
+    const avgImpPerDau = avg(total.imp_per_dau);
+    const avgArpu = avg(total.arpu);
+    const blendedEcpm = avgImpPerDau > 0 ? (avgArpu * 1000) / avgImpPerDau : 0;
+
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText('ads-est-impr', avgImpPerDau.toFixed(1));
+    setText('ads-est-ecpm', `$${blendedEcpm.toFixed(2)}`);
+    setText('ads-est-arpdau', `$${avgArpu.toFixed(3)}`);
+
+    // Cache for hover lookup (no recompute on mousemove)
+    this._est = {
+      series, total, metric, perFormatView, days, VB_W, VB_H,
+      padL, padR, padTop, padBot, maxV, FORMATS,
+      xAt: (i) => padL + (i / (days - 1)) * (VB_W - padL - padR),
+      yAt: (v) => padTop + (1 - v / maxV) * (VB_H - padTop - padBot),
+    };
+  },
+
+  formatCount(v) {
+    if (v >= 1_000_000) return (v / 1_000_000).toFixed(2).replace(/\.?0+$/, '') + 'M';
+    if (v >= 1000) return (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    return Math.round(v).toString();
+  },
+
+  formatMetric(v, metric) {
+    if (metric === 'ecpm') return `$${v.toFixed(2)}`;
+    if (metric === 'arpu') return `$${v.toFixed(3)}`;
+    // imp_per_dau — small numbers, show one decimal
+    return v.toFixed(2);
+  },
+
+  formatDollarsShort(v) {
+    if (v >= 1_000_000) return '$' + (v / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+    if (v >= 1000) return '$' + (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    if (v >= 1) return '$' + v.toFixed(2);
+    return '$' + v.toFixed(3);
+  },
+
+  bindEstimateHover() {
+    const svg = document.getElementById('ads-estimate-chart');
+    const tooltip = document.getElementById('ads-est-tooltip');
+    if (!svg || !tooltip) return;
+
+    const onMove = (e) => {
+      if (!this._est) return;
+      const rect = svg.getBoundingClientRect();
+      const { VB_W, padL, padR, days, xAt } = this._est;
+      // Convert clientX to viewBox X
+      const localX = e.clientX - rect.left;
+      const vbX = (localX / rect.width) * VB_W;
+      const usable = VB_W - padL - padR;
+      let idx = Math.round(((vbX - padL) / usable) * (days - 1));
+      idx = Math.max(0, Math.min(days - 1, idx));
+      this.updateHover(idx, rect);
+    };
+    const onLeave = () => this.hideHover();
+
+    svg.addEventListener('mousemove', onMove);
+    svg.addEventListener('mouseleave', onLeave);
+  },
+
+  updateHover(idx, svgRect) {
+    if (!this._est) return;
+    const { series, total, metric, perFormatView, FORMATS, VB_W, VB_H, padTop, padBot, xAt, yAt } = this._est;
+    const svg = document.getElementById('ads-estimate-chart');
+    const crosshair = svg.querySelector('.ads-est-crosshair');
+    const dotsG = svg.querySelector('.ads-est-dots');
+    const tooltip = document.getElementById('ads-est-tooltip');
+    if (!crosshair || !dotsG || !tooltip) return;
+
+    const xVB = xAt(idx);
+    crosshair.setAttribute('x1', xVB);
+    crosshair.setAttribute('x2', xVB);
+    crosshair.setAttribute('y1', padTop);
+    crosshair.setAttribute('y2', VB_H - padBot);
+    crosshair.style.display = '';
+
+    let dotsHtml = '';
+    let rowsHtml = '';
+    if (perFormatView) {
+      FORMATS.forEach(f => {
+        const stateKey = f.key === 'rv' ? 'rewarded' : f.key;
+        const enabled = this.state.ads.enabled[stateKey];
+        const v = series[f.key][metric][idx];
+        const y = yAt(v);
+        dotsHtml += `<circle cx="${xVB.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="${f.color}" stroke="#fff" stroke-width="2" opacity="${enabled ? 1 : 0.35}" vector-effect="non-scaling-stroke"/>`;
+        rowsHtml += `<div class="ads-est-tt-row" style="opacity:${enabled ? 1 : 0.5}"><span class="ads-est-tt-swatch" style="background:${f.color}"></span><span class="ads-est-tt-label">${f.label}</span><span class="ads-est-tt-val">${this.formatMetric(v, metric)}</span></div>`;
+      });
+    } else {
+      const color = metric === 'revenue' ? '#10b981' : '#00a1e1';
+      const label = metric === 'revenue' ? 'Revenue' : 'ARPDAU';
+      const v = total[metric][idx];
+      const y = yAt(v);
+      dotsHtml += `<circle cx="${xVB.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${color}" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+      rowsHtml += `<div class="ads-est-tt-row"><span class="ads-est-tt-swatch" style="background:${color}"></span><span class="ads-est-tt-label">${label}</span><span class="ads-est-tt-val">${this.formatMetric(v, metric)}</span></div>`;
+    }
+    dotsG.innerHTML = dotsHtml;
+
+    tooltip.innerHTML = `<div class="ads-est-tt-head">Day ${idx + 1}</div>${rowsHtml}`;
+    tooltip.style.display = '';
+
+    // Position tooltip in plot coordinates — flip to left if we're past 60% of width.
+    const rect = svgRect || svg.getBoundingClientRect();
+    const plotLeft = svg.offsetLeft;
+    const plotWidth = rect.width;
+    const xPx = plotLeft + (xVB / VB_W) * plotWidth;
+    const plotEl = svg.parentElement;
+    const tooltipWidth = tooltip.offsetWidth || 160;
+    const flipLeft = (xVB / VB_W) > 0.6;
+    const leftPos = flipLeft ? (xPx - tooltipWidth - 10) : (xPx + 10);
+    tooltip.style.left = `${Math.max(8, Math.min(leftPos, plotEl.clientWidth - tooltipWidth - 8))}px`;
+    tooltip.style.top = `${svg.offsetTop + 12}px`;
+  },
+
+  hideHover() {
+    const svg = document.getElementById('ads-estimate-chart');
+    const tooltip = document.getElementById('ads-est-tooltip');
+    if (svg) {
+      const crosshair = svg.querySelector('.ads-est-crosshair');
+      const dotsG = svg.querySelector('.ads-est-dots');
+      if (crosshair) crosshair.style.display = 'none';
+      if (dotsG) dotsG.innerHTML = '';
+    }
+    if (tooltip) tooltip.style.display = 'none';
+  },
+
+  bindIapsConfigurator() {
+    const onChange = () => {
+      this.renderShopPreview();
+      this.renderStarterPreview();
+      this.renderOfferPreview();
+      this.renderIapEstimate();
+    };
+
+    // Card enable toggles (starter / offer)
+    document.querySelectorAll('.iap-enable').forEach(cb => {
+      cb.addEventListener('change', () => {
+        const f = cb.dataset.f;
+        if (f === 'starter') this.state.iaps.starterEnabled = cb.checked;
+        else if (f === 'offer') this.state.iaps.offerEnabled = cb.checked;
+        const card = cb.closest('.iap-card');
+        if (card) card.classList.toggle('ads-card--off', !cb.checked);
+        onChange();
+      });
+    });
+
+    // Anchor price radios
+    document.querySelectorAll('input[name="anchorPrice"]').forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          this.state.iaps.anchorPrice = r.value;
+          onChange();
+        }
+      });
+    });
+
+    // Starter trigger radios
+    document.querySelectorAll('input[name="starterTrigger"]').forEach(r => {
+      r.addEventListener('change', () => {
+        if (r.checked) {
+          this.state.iaps.starterTrigger = r.value;
+          this.renderStarterPreview();
+        }
+      });
+    });
+
+    // Offer bundle-type checkboxes
+    document.querySelectorAll('[data-group="offerTypes"] input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', () => {
+        this.state.iaps.offerTypes[cb.dataset.o] = cb.checked;
+        this.renderOfferPreview();
+      });
+    });
+
+    // IAP sliders (discount + cadence)
+    document.querySelectorAll('.mon-panel[data-mpanel="iaps"] .mon-slider[data-i]').forEach(s => {
+      s.addEventListener('input', () => {
+        const i = s.dataset.i;
+        this.state.iaps[i] = parseInt(s.value, 10);
+        const valEl = document.querySelector(`[data-iv="${i}"]`);
+        if (valEl) valEl.textContent = s.value;
+        if (i === 'starterDiscount') this.renderStarterPreview();
+        if (i === 'offerCooldown') this.renderOfferPreview();
+        this.renderIapEstimate();
+      });
+    });
+
+    // Add SKU
+    const addBtn = document.getElementById('mon-sku-add');
+    if (addBtn) {
+      addBtn.addEventListener('click', () => {
+        if (this.state.iaps.skus.length >= 8) return;
+        this.state.iaps.skus.push({ price: 1.99, contents: 'New pack', featured: false });
+        this.renderSkuTable();
+        onChange();
+      });
+    }
+
+    // Estimate DAU chips
+    document.querySelectorAll('#iap-dau-chips .ads-dau-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        const value = chip.dataset.dau;
+        document.querySelectorAll('#iap-dau-chips .ads-dau-chip').forEach(c => c.classList.toggle('active', c === chip));
+        const customInput = document.getElementById('iap-dau-custom');
+        if (value === 'custom') {
+          if (customInput) {
+            customInput.hidden = false;
+            customInput.focus();
+          }
+        } else {
+          if (customInput) customInput.hidden = true;
+          this.state.iaps.estimate.dau = parseInt(value, 10);
+          this.renderIapEstimate();
+        }
+      });
+    });
+    const customDau = document.getElementById('iap-dau-custom');
+    if (customDau) {
+      customDau.addEventListener('input', () => {
+        const v = Math.max(1000, parseInt(customDau.value, 10) || 1000);
+        this.state.iaps.estimate.dau = v;
+        this.renderIapEstimate();
+      });
+    }
+
+    // Estimate metric tabs
+    document.querySelectorAll('#iap-metric-tabs .ads-metric-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const metric = tab.dataset.metric;
+        this.state.iaps.estimate.metric = metric;
+        document.querySelectorAll('#iap-metric-tabs .ads-metric-tab').forEach(t => {
+          const on = t.dataset.metric === metric;
+          t.classList.toggle('active', on);
+          t.setAttribute('aria-selected', on ? 'true' : 'false');
+        });
+        this.renderIapEstimate();
+      });
+    });
+  },
+
+  renderSkuTable() {
+    const table = document.getElementById('mon-sku-table');
+    if (!table) return;
+    table.querySelectorAll('.mon-sku-row').forEach(r => r.remove());
+    this.state.iaps.skus.forEach((sku, idx) => {
+      const row = document.createElement('div');
+      row.className = 'mon-sku-row';
+      row.innerHTML = `
+        <input type="number" step="0.01" min="0" value="${sku.price.toFixed(2)}" data-sidx="${idx}" data-sfield="price">
+        <input type="text" value="${sku.contents.replace(/"/g, '&quot;')}" data-sidx="${idx}" data-sfield="contents">
+        <input type="checkbox" class="mon-sku-featured" ${sku.featured ? 'checked' : ''} data-sidx="${idx}" data-sfield="featured">
+        <button class="mon-sku-del" type="button" data-sidx="${idx}" aria-label="Remove SKU">×</button>
+      `;
+      table.appendChild(row);
+    });
+    table.querySelectorAll('.mon-sku-row input').forEach(inp => {
+      const ev = inp.type === 'checkbox' ? 'change' : 'input';
+      inp.addEventListener(ev, () => {
+        const idx = parseInt(inp.dataset.sidx, 10);
+        const field = inp.dataset.sfield;
+        const sku = this.state.iaps.skus[idx];
+        if (!sku) return;
+        if (field === 'price') sku.price = Math.max(0, parseFloat(inp.value) || 0);
+        else if (field === 'contents') sku.contents = inp.value;
+        else if (field === 'featured') {
+          // Only one SKU can be featured at a time
+          if (inp.checked) this.state.iaps.skus.forEach((s, i) => { s.featured = (i === idx); });
+          else sku.featured = false;
+          this.renderSkuTable();
+        }
+        this.renderShopPreview();
+        this.renderIapEstimate();
+      });
+    });
+    table.querySelectorAll('.mon-sku-del').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.sidx, 10);
+        if (this.state.iaps.skus.length <= 1) return;
+        this.state.iaps.skus.splice(idx, 1);
+        this.renderSkuTable();
+        this.renderShopPreview();
+        this.renderIapEstimate();
+      });
+    });
+    const addBtn = document.getElementById('mon-sku-add');
+    if (addBtn) addBtn.disabled = this.state.iaps.skus.length >= 8;
+  },
+
+  // ---------- IAP funnel math ----------
+  _anchorSku() {
+    const { skus, anchorPrice } = this.state.iaps;
+    if (!skus.length) return { price: 4.99 };
+    if (anchorPrice === 'cheapest')  return skus.reduce((a, b) => a.price < b.price ? a : b);
+    if (anchorPrice === 'expensive') return skus.reduce((a, b) => a.price > b.price ? a : b);
+    return skus.find(s => s.featured) || skus[0];
+  },
+
+  computeFunnel() {
+    const { skus, starterEnabled, starterDiscount, offerEnabled, offerCooldown } = this.state.iaps;
+    const anchor = this._anchorSku();
+    const basePrice = anchor.price || 4.99;
+    const priceFactor = Math.max(0.4, Math.min(1.6, 2.5 / basePrice));
+    const starterBoost = starterEnabled ? (1 + starterDiscount / 150) : 1;
+    const offerMult = offerEnabled ? 1 : 0.82;
+    const cadenceBoost = offerEnabled ? 1 + (48 / Math.max(offerCooldown, 6) - 1) * 0.15 : 1;
+
+    const install = 1.0;
+    const session3 = 0.38;
+    const firstBuy = Math.min(0.08, 0.025 * priceFactor * starterBoost * cadenceBoost * offerMult);
+    const repeat = firstBuy * 0.42;
+    const whale = firstBuy * 0.035;
+
+    const payerPct = firstBuy * 100;
+    const atv = skus.reduce((a, s) => a + s.price, 0) / Math.max(skus.length, 1);
+    const purchasesPerPayer = 1 + repeat / Math.max(firstBuy, 0.0001) * 3 + whale / Math.max(firstBuy, 0.0001) * 15;
+    const iapArpdau = firstBuy * atv * purchasesPerPayer;
+
+    return {
+      steps: [
+        { label: 'Install',        val: install },
+        { label: 'Session 3',      val: session3 },
+        { label: 'First purchase', val: firstBuy },
+        { label: 'Repeat buy',     val: repeat },
+        { label: 'Whale',          val: whale },
+      ],
+      firstBuy, repeat, whale,
+      payerPct, atv, iapArpdau, purchasesPerPayer,
+    };
+  },
+
+  // ---------- Previews ----------
+  renderShopPreview() {
+    const grid = document.getElementById('iap-shop-grid');
+    if (!grid) return;
+    const tiles = this.state.iaps.skus.slice(0, 4);
+    const colors = ['#00a1e1', '#f59e0b', '#10b981', '#8b5cf6'];
+    grid.innerHTML = tiles.map((sku, i) => {
+      const price = `$${sku.price.toFixed(2)}`;
+      const featCls = sku.featured ? ' iap-shop-tile--featured' : '';
+      const badge = sku.featured ? '<div class="iap-shop-tile-badge">★</div>' : '';
+      return `
+        <div class="iap-shop-tile${featCls}" style="--tile-accent:${colors[i % colors.length]}">
+          ${badge}
+          <div class="iap-shop-tile-contents">${this._escape(sku.contents)}</div>
+          <div class="iap-shop-tile-price">${price}</div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  renderStarterPreview() {
+    const { starterEnabled, starterDiscount, starterTrigger } = this.state.iaps;
+    const card = document.querySelector('.iap-card--starter');
+    if (card) card.classList.toggle('ads-card--off', !starterEnabled);
+    const anchor = this._anchorSku();
+    const basePrice = anchor.price || 9.99;
+    const fullPrice = Math.max(basePrice, 4.99);
+    const discounted = fullPrice * (1 - starterDiscount / 100);
+    const origEl = document.getElementById('iap-starter-orig');
+    const nowEl = document.getElementById('iap-starter-now');
+    if (origEl) origEl.textContent = `$${fullPrice.toFixed(2)}`;
+    if (nowEl)  nowEl.textContent  = `$${discounted.toFixed(2)}`;
+    const captionEl = document.getElementById('iap-starter-caption');
+    if (captionEl) {
+      const trigLabel = { first_launch: 'first launch', session3: 'session 3', first_loss: 'first loss', custom: 'custom prompt' }[starterTrigger] || 'session 3';
+      captionEl.textContent = starterEnabled
+        ? `Triggers after ${trigLabel} · ${starterDiscount}% off`
+        : 'Disabled';
+    }
+  },
+
+  renderOfferPreview() {
+    const { offerEnabled, offerCooldown, offerTypes } = this.state.iaps;
+    const card = document.querySelector('.iap-card--offer');
+    if (card) card.classList.toggle('ads-card--off', !offerEnabled);
+
+    const types = {
+      coin_gem: { label: 'Coins + Gems bundle', icon: '🪙💎', header: 'FLASH DEAL',  old: 14.99, bonus: '+120%' },
+      booster:  { label: 'Booster pack',        icon: '⚡⚡⚡', header: 'POWER UP',    old: 9.99,  bonus: '+3 boosters' },
+      cosmetic: { label: 'Exclusive cosmetic',  icon: '🎨',   header: 'RARE SKIN',   old: 11.99, bonus: 'Exclusive' },
+      whale:    { label: 'Whale bundle',        icon: '👑',   header: 'VIP OFFER',   old: 99.99, bonus: '+400%' },
+      custom:   { label: 'Custom bundle',       icon: '✨',   header: 'CUSTOM',      old: 4.99,  bonus: 'Defined' },
+    };
+    const active = Object.keys(offerTypes).filter(k => offerTypes[k]);
+    const pick = active.length ? types[active[0]] : types.coin_gem;
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    set('iap-offer-header', pick.header);
+    set('iap-offer-icon',   pick.icon);
+    set('iap-offer-body',   pick.label);
+    set('iap-offer-old',    `$${pick.old.toFixed(2)}`);
+    set('iap-offer-bonus',  pick.bonus);
+    const captionEl = document.getElementById('iap-offer-caption');
+    if (captionEl) {
+      captionEl.textContent = offerEnabled
+        ? `Every ${offerCooldown}h · ${active.length || 1} bundle type${active.length === 1 ? '' : 's'} in rotation`
+        : 'Disabled';
+    }
+  },
+
+  _escape(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  },
+
+  // ---------- IAP Estimate (chart + stats) ----------
+  renderIapEstimate() {
+    const funnel = this.computeFunnel();
+    const setText = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    setText('mon-iap-payer',  `${funnel.payerPct.toFixed(1)}%`);
+    setText('mon-iap-atv',    `$${funnel.atv.toFixed(2)}`);
+    setText('mon-iap-arpdau', `$${funnel.iapArpdau.toFixed(3)}`);
+
+    const svg = document.getElementById('iap-estimate-chart');
+    if (!svg) return;
+    const { metric } = this.state.iaps.estimate;
+    const padL = 44, padR = 16, padTop = 12, padBot = 24;
+    const { w: VB_W, h: VB_H } = this._svgDims(svg);
+    const seriesGroup = svg.querySelector('.iap-est-series');
+    const gridGroup = svg.querySelector('.et-chart-grid');
+    const xLabelsWrap = svg.parentElement.querySelector('[data-xlabels]');
+    const yLabelsWrap = svg.parentElement.querySelector('[data-ylabels]');
+    const legend = document.getElementById('iap-estimate-legend');
+    if (!seriesGroup || !xLabelsWrap || !yLabelsWrap || !legend) return;
+    if (gridGroup) gridGroup.innerHTML = '';
+
+    // Dispatch per-metric renderer.
+    let state;
+    if (metric === 'funnel') {
+      state = this._renderFunnelChart(seriesGroup, xLabelsWrap, yLabelsWrap, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot);
+    } else if (metric === 'revenue_by_sku') {
+      state = this._renderRevenueBySku(seriesGroup, gridGroup, xLabelsWrap, yLabelsWrap, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot);
+    } else if (metric === 'arpdau_vs_dau') {
+      state = this._renderArpdauVsDau(seriesGroup, gridGroup, xLabelsWrap, yLabelsWrap, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot);
+    } else if (metric === 'conv_d30') {
+      state = this._renderRampD30(seriesGroup, gridGroup, xLabelsWrap, yLabelsWrap, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot, 'conv');
+    } else {
+      state = this._renderRampD30(seriesGroup, gridGroup, xLabelsWrap, yLabelsWrap, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot, 'arpu');
+    }
+    this._iapEst = { metric, VB_W, VB_H, padL, padR, padTop, padBot, ...state };
+  },
+
+  _renderFunnelChart(seriesG, xLab, yLab, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot) {
+    const steps = funnel.steps;
+    const max = steps[0].val;
+    const color = '#00a1e1';
+
+    // Clear the SVG chart and axis labels — funnel uses the HTML overlay instead.
+    seriesG.innerHTML = '';
+    xLab.innerHTML = '';
+    yLab.innerHTML = '';
+    const svg = document.getElementById('iap-estimate-chart');
+    if (svg) svg.style.visibility = 'hidden';
+    yLab.style.visibility = 'hidden';
+
+    // Populate the HTML funnel overlay
+    const overlay = document.getElementById('iap-funnel-html');
+    if (overlay) {
+      overlay.hidden = false;
+      overlay.innerHTML = steps.map(s => {
+        const pct = (s.val / max) * 100;
+        const display = s.val >= 0.1 ? `${(s.val * 100).toFixed(0)}%` : `${(s.val * 100).toFixed(1)}%`;
+        return `
+          <div class="iap-funnel-row">
+            <span class="iap-funnel-label">${s.label}</span>
+            <div class="iap-funnel-track"><div class="iap-funnel-bar" style="width:${pct.toFixed(1)}%"></div></div>
+            <span class="iap-funnel-val">${display}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    legend.innerHTML = `<span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${color}"></span>Install → Whale funnel</span>`;
+    return { mode: 'funnel', funnel };
+  },
+
+  _showSvgChart() {
+    const svg = document.getElementById('iap-estimate-chart');
+    if (svg) svg.style.visibility = '';
+    const overlay = document.getElementById('iap-funnel-html');
+    if (overlay) { overlay.hidden = true; overlay.innerHTML = ''; }
+    const plot = svg ? svg.parentElement : null;
+    const yLab = plot ? plot.querySelector('[data-ylabels]') : null;
+    if (yLab) yLab.style.visibility = '';
+  },
+
+  _gridlines(gridG, VB_W, VB_H, padL, padR, padTop, padBot) {
+    if (!gridG) return;
+    let g = '';
+    for (let i = 0; i <= 4; i++) {
+      const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+      g += `<line x1="${padL}" y1="${yy.toFixed(1)}" x2="${VB_W - padR}" y2="${yy.toFixed(1)}" stroke="rgba(22,27,37,0.08)" stroke-width="1" stroke-dasharray="${i === 4 ? '0' : '3,4'}" vector-effect="non-scaling-stroke"/>`;
+    }
+    gridG.innerHTML = g;
+  },
+
+  _renderRevenueBySku(seriesG, gridG, xLab, yLab, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot) {
+    this._showSvgChart();
+    const skus = this.state.iaps.skus;
+    const dau = this.state.iaps.estimate.dau;
+    const totalPayers = dau * funnel.firstBuy;
+    const anchor = this._anchorSku();
+    const weights = skus.map(s => {
+      const base = s === anchor ? 0.45 : (1 - 0.45) / Math.max(skus.length - 1, 1);
+      return { sku: s, share: base };
+    });
+    const revenues = weights.map(w => ({ sku: w.sku, rev: totalPayers * w.share * w.sku.price * funnel.purchasesPerPayer, featured: w.sku === anchor }));
+    const maxV = Math.max(...revenues.map(r => r.rev), 0.0001) * 1.2;
+
+    this._gridlines(gridG, VB_W, VB_H, padL, padR, padTop, padBot);
+
+    const n = revenues.length;
+    const usableW = VB_W - padL - padR;
+    const groupW = usableW / n;
+    const barW = Math.min(36, groupW * 0.32);  // narrower, crisper bars
+    const baseColor = '#10b981';
+    const featColor = '#f59e0b';
+    const plotBot = VB_H - padBot;
+
+    let html = '';
+    const hoverRects = [];
+    revenues.forEach((r, i) => {
+      const cx = padL + groupW * i + groupW / 2;
+      const x = cx - barW / 2;
+      const h = (r.rev / maxV) * (VB_H - padTop - padBot);
+      const y = plotBot - h;
+      const color = r.featured ? featColor : baseColor;
+      const fill = r.featured ? 'url(#iap-est-grad-feat)' : 'url(#iap-est-grad-sku)';
+      // Rounded top only — draw as path so bottom stays square on baseline
+      const rx = Math.min(6, barW / 2, h / 2);
+      const d = `M ${x} ${plotBot} L ${x} ${y + rx} Q ${x} ${y} ${x + rx} ${y} L ${x + barW - rx} ${y} Q ${x + barW} ${y} ${x + barW} ${y + rx} L ${x + barW} ${plotBot} Z`;
+      html += `<path d="${d}" fill="${fill}" stroke="${color}" stroke-width="1.4" vector-effect="non-scaling-stroke"/>`;
+      // Value label on top of bar
+      const valText = this.formatDollarsShort(r.rev);
+      html += `<text x="${cx}" y="${y - 6}" text-anchor="middle" font-size="11" font-weight="700" fill="${color}" font-family="var(--font)">${valText}</text>`;
+      hoverRects.push({ x: cx - groupW / 2, y: padTop, w: groupW, h: VB_H - padTop - padBot, idx: i, cx, top: y, rev: r.rev, sku: r.sku });
+    });
+    // Baseline
+    html += `<line x1="${padL}" y1="${plotBot}" x2="${VB_W - padR}" y2="${plotBot}" stroke="rgba(22,27,37,0.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    seriesG.innerHTML = html;
+
+    xLab.innerHTML = revenues.map((r, i) => {
+      const pct = (((padL + groupW * i + groupW / 2) / VB_W) * 100).toFixed(2);
+      const style = r.featured
+        ? `left:${pct}%; transform:translateX(-50%); color:#f59e0b; font-weight:700`
+        : `left:${pct}%; transform:translateX(-50%)`;
+      return `<span style="${style}">$${r.sku.price.toFixed(2)}</span>`;
+    }).join('');
+
+    const fmt = this.formatDollarsShort.bind(this);
+    const parts = [];
+    for (let i = 0; i <= 4; i++) {
+      const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+      const v = maxV - (maxV * i / 4);
+      const pct = ((yy / VB_H) * 100).toFixed(2);
+      parts.push(`<span style="top:${pct}%">${fmt(v)}</span>`);
+    }
+    yLab.innerHTML = parts.join('');
+    legend.innerHTML = `<span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${baseColor}"></span>SKU</span>
+      <span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${featColor}"></span>Anchor</span>
+      <span class="ads-legend-item" style="opacity:0.7">at ${this.formatCount(dau)} DAU</span>`;
+
+    return { mode: 'bars', hoverRects };
+  },
+
+  _renderArpdauVsDau(seriesG, gridG, xLab, yLab, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot) {
+    this._showSvgChart();
+    const dauPoints = [10000, 25000, 50000, 100000, 215000, 500000];
+    const series = dauPoints.map(d => ({ dau: d, rev: d * funnel.iapArpdau }));
+    const maxV = Math.max(...series.map(s => s.rev), 0.0001) * 1.2;
+    const n = series.length;
+    const xAt = (i) => padL + (i / (n - 1)) * (VB_W - padL - padR);
+    const yAt = (v) => padTop + (1 - v / maxV) * (VB_H - padTop - padBot);
+    const color = '#f59e0b';
+    const grad = 'url(#iap-est-grad-dau)';
+
+    this._gridlines(gridG, VB_W, VB_H, padL, padR, padTop, padBot);
+
+    let linePath = `M ${xAt(0).toFixed(1)} ${yAt(series[0].rev).toFixed(1)}`;
+    for (let i = 1; i < n; i++) linePath += ` L ${xAt(i).toFixed(1)} ${yAt(series[i].rev).toFixed(1)}`;
+    const areaPath = `${linePath} L ${xAt(n-1).toFixed(1)} ${(VB_H - padBot).toFixed(1)} L ${xAt(0).toFixed(1)} ${(VB_H - padBot).toFixed(1)} Z`;
+
+    let html = '';
+    html += `<path d="${areaPath}" fill="${grad}" stroke="none"/>`;
+    html += `<path d="${linePath}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+    series.forEach((p, i) => {
+      html += `<circle cx="${xAt(i).toFixed(1)}" cy="${yAt(p.rev).toFixed(1)}" r="4" fill="#fff" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    });
+    html += `<line x1="${padL}" y1="${VB_H - padBot}" x2="${VB_W - padR}" y2="${VB_H - padBot}" stroke="rgba(22,27,37,0.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    seriesG.innerHTML = html;
+
+    xLab.innerHTML = series.map((p, i) => {
+      const pct = ((xAt(i) / VB_W) * 100).toFixed(2);
+      return `<span style="left:${pct}%; transform:translateX(-50%)">${this.formatCount(p.dau)}</span>`;
+    }).join('');
+
+    const fmt = this.formatDollarsShort.bind(this);
+    const parts = [];
+    for (let i = 0; i <= 4; i++) {
+      const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+      const v = maxV - (maxV * i / 4);
+      const pct = ((yy / VB_H) * 100).toFixed(2);
+      parts.push(`<span style="top:${pct}%">${fmt(v)}</span>`);
+    }
+    yLab.innerHTML = parts.join('');
+    legend.innerHTML = `<span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${color}"></span>Daily IAP revenue</span>`;
+
+    const hoverPoints = series.map((p, i) => ({ idx: i, cx: xAt(i), cy: yAt(p.rev), dau: p.dau, rev: p.rev }));
+    return { mode: 'line', hoverPoints };
+  },
+
+  _renderRampD30(seriesG, gridG, xLab, yLab, legend, funnel, VB_W, VB_H, padL, padR, padTop, padBot, which) {
+    this._showSvgChart();
+    const DAYS = 30;
+    // Saturating ramps: first-purchase conversion saturates earlier (tau=6),
+    // cumulative ARPU-per-install saturates later (tau=8).
+    const convSteady = funnel.firstBuy * 100;
+    const arpuSteady = funnel.atv * funnel.purchasesPerPayer * funnel.firstBuy;
+
+    const isConv = which === 'conv';
+    const values = [];
+    for (let d = 1; d <= DAYS; d++) {
+      values.push(isConv
+        ? convSteady * (1 - Math.exp(-d / 6))
+        : arpuSteady * (1 - Math.exp(-d / 8)));
+    }
+    const steady = isConv ? convSteady : arpuSteady;
+    const maxV = Math.max(steady * 1.1, 0.0001);
+    const n = DAYS;
+    const xAt = (i) => padL + (i / (n - 1)) * (VB_W - padL - padR);
+    const yAt = (v) => padTop + (1 - v / maxV) * (VB_H - padTop - padBot);
+
+    this._gridlines(gridG, VB_W, VB_H, padL, padR, padTop, padBot);
+
+    const color = isConv ? '#00a1e1' : '#10b981';
+    const grad = isConv ? 'url(#iap-est-grad-conv)' : 'url(#iap-est-grad-arpu)';
+    const label = isConv ? 'Conversion' : 'ARPU / install';
+    const fmtV = isConv
+      ? (v) => `${v.toFixed(2)}%`
+      : (v) => this.formatDollarsShort(v);
+
+    let linePath = `M ${xAt(0).toFixed(1)} ${yAt(values[0]).toFixed(1)}`;
+    for (let i = 1; i < n; i++) linePath += ` L ${xAt(i).toFixed(1)} ${yAt(values[i]).toFixed(1)}`;
+    const areaPath = `${linePath} L ${xAt(n-1).toFixed(1)} ${(VB_H - padBot).toFixed(1)} L ${xAt(0).toFixed(1)} ${(VB_H - padBot).toFixed(1)} Z`;
+
+    let html = '';
+    html += `<path d="${areaPath}" fill="${grad}" stroke="none"/>`;
+    html += `<path d="${linePath}" fill="none" stroke="${color}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+    // Steady-state ceiling
+    html += `<line x1="${padL}" y1="${yAt(steady).toFixed(1)}" x2="${VB_W - padR}" y2="${yAt(steady).toFixed(1)}" stroke="${color}" stroke-width="1" stroke-dasharray="2,4" opacity="0.55" vector-effect="non-scaling-stroke"/>`;
+    // End dot
+    html += `<circle cx="${xAt(n-1).toFixed(1)}" cy="${yAt(values[n-1]).toFixed(1)}" r="4" fill="#fff" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    // Baseline
+    html += `<line x1="${padL}" y1="${VB_H - padBot}" x2="${VB_W - padR}" y2="${VB_H - padBot}" stroke="rgba(22,27,37,0.2)" stroke-width="1" vector-effect="non-scaling-stroke"/>`;
+    seriesG.innerHTML = html;
+
+    // X axis: D1, D5, D10, D15, D20, D25, D30
+    const marks = [0, 4, 9, 14, 19, 24, 29];
+    xLab.innerHTML = marks.map(i => {
+      const pct = ((xAt(i) / VB_W) * 100).toFixed(2);
+      return `<span style="left:${pct}%; transform:translateX(-50%)">D${i + 1}</span>`;
+    }).join('');
+
+    // Y axis
+    const parts = [];
+    for (let i = 0; i <= 4; i++) {
+      const yy = padTop + ((VB_H - padTop - padBot) * i / 4);
+      const v = maxV - (maxV * i / 4);
+      const pct = ((yy / VB_H) * 100).toFixed(2);
+      parts.push(`<span style="top:${pct}%">${fmtV(v)}</span>`);
+    }
+    yLab.innerHTML = parts.join('');
+
+    legend.innerHTML = `<span class="ads-legend-item"><span class="ads-legend-swatch" style="background:${color}"></span>${label}</span>
+      <span class="ads-legend-item" style="opacity:0.7">saturates to ${fmtV(steady)}</span>`;
+
+    const hoverPoints = [];
+    for (let i = 0; i < n; i++) {
+      hoverPoints.push({ idx: i, cx: xAt(i), cy: yAt(values[i]), day: i + 1, val: values[i], label, color, fmtV });
+    }
+    return { mode: 'ramp', hoverPoints, color, label };
+  },
+
+  bindIapEstimateHover() {
+    const svg = document.getElementById('iap-estimate-chart');
+    const tooltip = document.getElementById('iap-est-tooltip');
+    if (!svg || !tooltip) return;
+
+    const onMove = (e) => {
+      if (!this._iapEst) return;
+      const rect = svg.getBoundingClientRect();
+      const localX = e.clientX - rect.left;
+      const localY = e.clientY - rect.top;
+      const { VB_W, VB_H, mode } = this._iapEst;
+      const vbX = (localX / rect.width) * VB_W;
+      const vbY = (localY / rect.height) * VB_H;
+
+      if (mode === 'funnel') {
+        // Funnel values are rendered inline in HTML — no tooltip needed.
+        this._hideIapTooltip();
+      } else if (mode === 'bars') {
+        const hit = this._iapEst.hoverRects.find(r => vbX >= r.x && vbX <= r.x + r.w);
+        if (hit) this._showIapTooltipBar(hit, rect);
+        else this._hideIapTooltip();
+      } else if (mode === 'line') {
+        const pts = this._iapEst.hoverPoints;
+        let best = pts[0], bestDist = Infinity;
+        pts.forEach(p => { const d = Math.abs(p.cx - vbX); if (d < bestDist) { bestDist = d; best = p; } });
+        this._showIapTooltipLine(best, rect);
+      } else if (mode === 'ramp') {
+        const pts = this._iapEst.hoverPoints;
+        let best = pts[0], bestDist = Infinity;
+        pts.forEach(p => { const d = Math.abs(p.cx - vbX); if (d < bestDist) { bestDist = d; best = p; } });
+        this._showIapTooltipRamp(best, rect);
+      }
+    };
+    const onLeave = () => this._hideIapTooltip();
+    svg.addEventListener('mousemove', onMove);
+    svg.addEventListener('mouseleave', onLeave);
+  },
+
+  _iapCrosshair(xVB) {
+    const svg = document.getElementById('iap-estimate-chart');
+    if (!svg) return;
+    const crosshair = svg.querySelector('.iap-est-crosshair');
+    const { VB_H, padTop, padBot } = this._iapEst;
+    if (crosshair) {
+      crosshair.setAttribute('x1', xVB);
+      crosshair.setAttribute('x2', xVB);
+      crosshair.setAttribute('y1', padTop);
+      crosshair.setAttribute('y2', VB_H - padBot);
+      crosshair.style.display = '';
+    }
+  },
+
+  _iapPlaceTooltip(tooltip, xVB, svgRect) {
+    const svg = document.getElementById('iap-estimate-chart');
+    const { VB_W } = this._iapEst;
+    const rect = svgRect || svg.getBoundingClientRect();
+    const plotLeft = svg.offsetLeft;
+    const xPx = plotLeft + (xVB / VB_W) * rect.width;
+    const plotEl = svg.parentElement;
+    const tooltipWidth = tooltip.offsetWidth || 160;
+    const flipLeft = (xVB / VB_W) > 0.6;
+    const leftPos = flipLeft ? (xPx - tooltipWidth - 10) : (xPx + 10);
+    tooltip.style.left = `${Math.max(8, Math.min(leftPos, plotEl.clientWidth - tooltipWidth - 8))}px`;
+    tooltip.style.top = `${svg.offsetTop + 12}px`;
+  },
+
+  _showIapTooltipFunnel(hit, svgRect) {
+    const tooltip = document.getElementById('iap-est-tooltip');
+    const step = this._iapEst.funnel.steps[hit.idx];
+    const xVB = hit.x + hit.w; // align to bar end
+    this._iapCrosshair(xVB);
+    const dotsG = document.querySelector('#iap-estimate-chart .iap-est-dots');
+    if (dotsG) dotsG.innerHTML = '';
+    const pct = step.val >= 0.1 ? `${(step.val * 100).toFixed(1)}%` : `${(step.val * 100).toFixed(2)}%`;
+    tooltip.innerHTML = `<div class="ads-est-tt-head">${step.label}</div>
+      <div class="ads-est-tt-row"><span class="ads-est-tt-swatch" style="background:#00a1e1"></span><span class="ads-est-tt-label">Share</span><span class="ads-est-tt-val">${pct}</span></div>`;
+    tooltip.style.display = '';
+    this._iapPlaceTooltip(tooltip, xVB, svgRect);
+  },
+
+  _showIapTooltipBar(hit, svgRect) {
+    const tooltip = document.getElementById('iap-est-tooltip');
+    this._iapCrosshair(hit.cx);
+    const dotsG = document.querySelector('#iap-estimate-chart .iap-est-dots');
+    if (dotsG) dotsG.innerHTML = `<circle cx="${hit.cx.toFixed(1)}" cy="${hit.top.toFixed(1)}" r="5" fill="#10b981" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>`;
+    tooltip.innerHTML = `<div class="ads-est-tt-head">$${hit.sku.price.toFixed(2)} SKU</div>
+      <div class="ads-est-tt-row"><span class="ads-est-tt-swatch" style="background:#10b981"></span><span class="ads-est-tt-label">${this._escape(hit.sku.contents)}</span><span class="ads-est-tt-val">${this.formatDollarsShort(hit.rev)}/day</span></div>`;
+    tooltip.style.display = '';
+    this._iapPlaceTooltip(tooltip, hit.cx, svgRect);
+  },
+
+  _showIapTooltipLine(pt, svgRect) {
+    const tooltip = document.getElementById('iap-est-tooltip');
+    this._iapCrosshair(pt.cx);
+    const dotsG = document.querySelector('#iap-estimate-chart .iap-est-dots');
+    if (dotsG) dotsG.innerHTML = `<circle cx="${pt.cx.toFixed(1)}" cy="${pt.cy.toFixed(1)}" r="5" fill="#f59e0b" stroke="#fff" stroke-width="2.2" vector-effect="non-scaling-stroke"/>`;
+    tooltip.innerHTML = `<div class="ads-est-tt-head">${this.formatCount(pt.dau)} DAU</div>
+      <div class="ads-est-tt-row"><span class="ads-est-tt-swatch" style="background:#f59e0b"></span><span class="ads-est-tt-label">IAP revenue</span><span class="ads-est-tt-val">${this.formatDollarsShort(pt.rev)}/day</span></div>`;
+    tooltip.style.display = '';
+    this._iapPlaceTooltip(tooltip, pt.cx, svgRect);
+  },
+
+  _showIapTooltipRamp(pt, svgRect) {
+    const tooltip = document.getElementById('iap-est-tooltip');
+    this._iapCrosshair(pt.cx);
+    const dotsG = document.querySelector('#iap-estimate-chart .iap-est-dots');
+    if (dotsG) {
+      dotsG.innerHTML = `<circle cx="${pt.cx.toFixed(1)}" cy="${pt.cy.toFixed(1)}" r="5" fill="${pt.color}" stroke="#fff" stroke-width="2.2" vector-effect="non-scaling-stroke"/>`;
+    }
+    tooltip.innerHTML = `<div class="ads-est-tt-head">Day ${pt.day}</div>
+      <div class="ads-est-tt-row"><span class="ads-est-tt-swatch" style="background:${pt.color}"></span><span class="ads-est-tt-label">${pt.label}</span><span class="ads-est-tt-val">${pt.fmtV(pt.val)}</span></div>`;
+    tooltip.style.display = '';
+    this._iapPlaceTooltip(tooltip, pt.cx, svgRect);
+  },
+
+  _hideIapTooltip() {
+    const svg = document.getElementById('iap-estimate-chart');
+    const tooltip = document.getElementById('iap-est-tooltip');
+    if (svg) {
+      const crosshair = svg.querySelector('.iap-est-crosshair');
+      const dotsG = svg.querySelector('.iap-est-dots');
+      if (crosshair) crosshair.style.display = 'none';
+      if (dotsG) dotsG.innerHTML = '';
+    }
+    if (tooltip) tooltip.style.display = 'none';
+  },
+
+  bindGenerate() {
+    const btn = document.getElementById('mon-generate-btn');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      this.renderEstimate();
+      this.renderIapEstimate();
+      document.querySelectorAll('.mon-panel').forEach(p => {
+        p.classList.remove('mon-pulse');
+        // restart animation
+        void p.offsetWidth;
+        p.classList.add('mon-pulse');
+      });
+    });
+  },
+};
+
+// ── Horizon: templated event tiles (click to toggle, custom expands w/ typed prompt) ──
+document.querySelectorAll('.horizon-event-tile').forEach(tile => {
+  tile.addEventListener('click', () => {
+    const wasOn = tile.classList.contains('horizon-event-tile--on');
+    document.querySelectorAll('.horizon-event-tile--on').forEach(t =>
+      t.classList.remove('horizon-event-tile--on')
+    );
+    if (!wasOn) {
+      tile.classList.add('horizon-event-tile--on');
+      if (tile.classList.contains('horizon-event-tile--custom')) {
+        typeCustomPrompt(tile);
+      }
+    }
+  });
+});
+
+function typeCustomPrompt(tile) {
+  const input = tile.querySelector('.horizon-custom-input');
+  if (!input) return;
+  const text = input.dataset.prompt || '';
+  input.textContent = '';
+  let i = 0;
+  const tick = () => {
+    if (!tile.classList.contains('horizon-event-tile--on')) return;
+    input.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(tick, 28);
+  };
+  tick();
+}
+
+// ── IAP custom-option chat inputs (Shop / Starter / Limited-time offer) ──
+function typeIapPrompt(input) {
+  if (!input) return;
+  const text = input.dataset.prompt || '';
+  input.textContent = '';
+  input.classList.add('is-typing');
+  const token = (input.dataset.token = String(Date.now()));
+  let i = 0;
+  const tick = () => {
+    if (input.dataset.token !== token || !input.classList.contains('is-open')) return;
+    input.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(tick, 28);
+    else input.classList.remove('is-typing');
+  };
+  tick();
+}
+function openIapPrompt(input) {
+  if (!input) return;
+  input.classList.add('is-open');
+  typeIapPrompt(input);
+}
+function closeIapPrompt(input) {
+  if (!input) return;
+  input.classList.remove('is-open', 'is-typing');
+  input.dataset.token = '';
+}
+
+// Shop — custom SKU describe button
+const skuCustomBtn = document.getElementById('mon-sku-add-custom');
+const skuCustomInput = document.getElementById('mon-sku-custom-input');
+if (skuCustomBtn && skuCustomInput) {
+  skuCustomBtn.addEventListener('click', () => {
+    const open = skuCustomInput.classList.toggle('is-open');
+    skuCustomBtn.classList.toggle('is-active', open);
+    if (open) typeIapPrompt(skuCustomInput);
+    else closeIapPrompt(skuCustomInput);
+  });
+}
+
+// Starter pack — custom trigger radio
+const starterCustomInput = document.getElementById('iap-starter-custom-input');
+document.querySelectorAll('input[name="starterTrigger"]').forEach(r => {
+  r.addEventListener('change', () => {
+    if (!starterCustomInput) return;
+    if (r.checked && r.value === 'custom') openIapPrompt(starterCustomInput);
+    else if (r.checked) closeIapPrompt(starterCustomInput);
+  });
+});
+
+// Limited-time offer — custom rotation checkbox
+const offerCustomCb = document.querySelector('[data-group="offerTypes"] input[data-o="custom"]');
+const offerCustomInput = document.getElementById('iap-offer-custom-input');
+if (offerCustomCb && offerCustomInput) {
+  offerCustomCb.addEventListener('change', () => {
+    if (offerCustomCb.checked) openIapPrompt(offerCustomInput);
+    else closeIapPrompt(offerCustomInput);
+  });
+}
+
+// Banner — custom position radio
+const bannerCustomInput = document.getElementById('ads-banner-custom-input');
+document.querySelectorAll('input[name="bannerPos"]').forEach(r => {
+  r.addEventListener('change', () => {
+    if (!bannerCustomInput) return;
+    if (r.checked && r.value === 'custom') openIapPrompt(bannerCustomInput);
+    else if (r.checked) closeIapPrompt(bannerCustomInput);
+  });
+});
+
+// Interstitial — custom placement checkbox
+const interCustomCb = document.querySelector('[data-group="interPlacements"] input[data-p="custom"]');
+const interCustomInput = document.getElementById('ads-inter-custom-input');
+if (interCustomCb && interCustomInput) {
+  interCustomCb.addEventListener('change', () => {
+    if (interCustomCb.checked) openIapPrompt(interCustomInput);
+    else closeIapPrompt(interCustomInput);
+  });
+}
+
+// Rewarded video — custom placement checkbox
+const rvCustomCb = document.querySelector('[data-group="rvPlacements"] input[data-p="custom"]');
+const rvCustomInput = document.getElementById('ads-rv-custom-input');
+if (rvCustomCb && rvCustomInput) {
+  rvCustomCb.addEventListener('change', () => {
+    if (rvCustomCb.checked) openIapPrompt(rvCustomInput);
+    else closeIapPrompt(rvCustomInput);
+  });
+}
+
+// Step 3 economy — custom currencies / boosters / faucets / tuning
+document.querySelectorAll('.econ-custom-add').forEach(btn => {
+  const input = document.getElementById(btn.dataset.target);
+  if (!input) return;
+  btn.addEventListener('click', () => {
+    const open = input.classList.toggle('is-open');
+    btn.classList.toggle('is-active', open);
+    if (open) typeIapPrompt(input);
+    else closeIapPrompt(input);
+  });
+});

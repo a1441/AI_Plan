@@ -17,6 +17,8 @@
       <button class="step-btn active" data-step="1">Step 1</button>
       <button class="step-btn" data-step="2">Step 2</button>
       <button class="step-btn" data-step="3">Step 3</button>
+      <button class="step-btn" data-step="4">Step 4</button>
+      <button class="step-btn" data-step="5">Step 5</button>
     </nav>
   </header>
 
@@ -152,7 +154,7 @@
             <div class="pipeline-icon">⚙</div>
             <div class="pipeline-num">04</div>
           </div>
-          <div class="pipeline-name">Game Engine</div>
+          <div class="pipeline-name">App Prototype</div>
           <div class="pipeline-desc">AI rebuilds the locked mechanic in Godot or Unity, then compiles real device builds.</div>
           <div class="card-actions">
             <button class="card-btn card-btn--green" id="engine-methodology-btn">Methodology</button>
@@ -162,7 +164,7 @@
             <div class="card-expand-inner card-expand-inner--green">
               <div class="card-expand-label">How it works</div>
               <ul class="method-list">
-                <li><span class="method-key">Translate</span><span class="method-val">AI regenerates the refined prototype in Godot or Unity</span></li>
+                <li><span class="method-key">Translate</span><span class="method-val">AI regenerates the refined prototype</span></li>
                 <li><span class="method-key">Build</span><span class="method-val">Compile APK for Android, IPA for iOS — one click</span></li>
                 <li><span class="method-key">Playtest</span><span class="method-val">Distribute to the team on real devices</span></li>
                 <li><span class="method-key">Iterate</span><span class="method-val">Feedback flows back into prompts at any stage</span></li>
@@ -173,7 +175,7 @@
           <div class="card-expand" id="engine-prompt-expand">
             <div class="card-expand-inner">
               <div class="card-expand-label">Engine prompt</div>
-              <p class="card-expand-text">Rebuild the refined web prototype as a native Godot project. Preserve the 8×8 grid, three-piece dealing, row/column clears with burst effects, floating score pops, and the dark polished visual theme. Produce a clean scene graph with reusable components, and set up export presets for Android APK and iOS IPA builds so the team can playtest on real devices.</p>
+              <p class="card-expand-text">Rebuild the refined web prototype as a native app. Preserve the 8×8 grid, three-piece dealing, row/column clears with burst effects, floating score pops, and the dark polished visual theme. Produce a clean component structure, and set up export presets for Android APK and iOS IPA builds so the team can playtest on real devices.</p>
               <div class="card-expand-sublabel">Build output</div>
               <div class="engine-builds">
                 <div class="engine-build">
@@ -503,6 +505,8 @@
             <span class="econ-col-title">Currencies</span>
           </div>
           <div class="econ-items" data-group="currencies"></div>
+          <button class="econ-custom-add" data-target="econ-custom-currencies" type="button">✨ Describe custom currency</button>
+          <div class="iap-custom-input" id="econ-custom-currencies" data-prompt="Faction Reputation — earned from clan missions, spent at the seasonal vendor. Resets each season."></div>
         </div>
 
         <div class="econ-col">
@@ -511,6 +515,8 @@
             <span class="econ-col-title">Boosters</span>
           </div>
           <div class="econ-items" data-group="boosters"></div>
+          <button class="econ-custom-add" data-target="econ-custom-boosters" type="button">✨ Describe custom booster</button>
+          <div class="iap-custom-input" id="econ-custom-boosters" data-prompt="Bomb piece — clears a 3×3 area around its placement, capped at 1 use per level."></div>
         </div>
 
         <div class="econ-phone econ-phone--side">
@@ -540,6 +546,8 @@
             <span class="econ-col-title">What enters the wallet</span>
           </div>
           <div class="econ-items" data-group="faucets"></div>
+          <button class="econ-custom-add" data-target="econ-custom-faucets" type="button">✨ Describe custom faucet</button>
+          <div class="iap-custom-input" id="econ-custom-faucets" data-prompt="First-clear bonus — 50 gems the first time the player completes a level on day 1, then off."></div>
         </div>
 
         <div class="econ-phone econ-phone--side">
@@ -604,6 +612,8 @@
           <div class="et-stat"><span class="et-stat-val" id="et-coin-total">—</span><span class="et-stat-lbl">Net coin flow</span></div>
           <div class="et-stat"><span class="et-stat-val" id="et-gem-total">—</span><span class="et-stat-lbl">Net gem flow</span></div>
         </div>
+        <button class="econ-custom-add" data-target="econ-custom-tuning" type="button">✨ Describe custom tuning rule</button>
+        <div class="iap-custom-input" id="econ-custom-tuning" data-prompt="Soft-pity rule — guarantee at least 1 gem drop on any level the player has retried 3+ times."></div>
       </div>
 
       <!-- Coins row -->
@@ -726,6 +736,686 @@
         </div>
       </div>
     </section>
+
+    <!-- STEP 4: MONETIZATION -->
+    <section class="step-view" data-step="4">
+      <div class="step-eyebrow">Step 4</div>
+      <h2 class="step-heading">Monetization</h2>
+      <p class="step-lede">Every dry checkpoint from Step 3 is a conversion moment. <span class="step-lede-accent">Tune how ads and IAPs fill those gaps — formats, cadence, price points, bundles.</span></p>
+
+      <div class="mon-topbar">
+        <div class="mon-tabs" role="tablist">
+          <button class="mon-tab-btn active" data-mtab="ads" role="tab" aria-selected="true">Ads</button>
+          <button class="mon-tab-btn" data-mtab="iaps" role="tab" aria-selected="false">IAPs</button>
+        </div>
+        <div class="mon-topbar-actions">
+          <button id="mon-generate-btn" class="generate-btn">Generate monetization ▸</button>
+        </div>
+      </div>
+
+      <!-- ============ ADS PANEL ============ -->
+      <div class="mon-panel active" data-mpanel="ads">
+        <div class="ads-configurator">
+
+          <!-- CARD 1: BANNER -->
+          <div class="ads-card ads-card--banner">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Banner</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" class="ads-enable" data-f="banner" checked>
+                <span>Enabled</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">Position</div>
+            <div class="ads-radio-group" data-group="bannerPos">
+              <label class="ads-radio"><input type="radio" name="bannerPos" value="bottom" checked><span>Below gameplay</span></label>
+              <label class="ads-radio"><input type="radio" name="bannerPos" value="top"><span>Above gameplay</span></label>
+              <label class="ads-radio"><input type="radio" name="bannerPos" value="middle"><span>Middle overlay</span></label>
+              <label class="ads-radio ads-radio--custom"><input type="radio" name="bannerPos" value="custom"><span>✨ Custom</span></label>
+            </div>
+            <div class="iap-custom-input" id="ads-banner-custom-input" data-prompt="Side-rail banner that hugs the right edge of the play area, only on portrait devices."></div>
+
+            <div class="ads-block-title">Visibility</div>
+            <div class="ads-radio-group" data-group="bannerVis">
+              <label class="ads-radio"><input type="radio" name="bannerVis" value="persistent" checked><span>Persistent</span></label>
+              <label class="ads-radio"><input type="radio" name="bannerVis" value="levels"><span>Only specific levels</span></label>
+            </div>
+            <div class="ads-level-range" id="ads-banner-levels" hidden>
+              <label>Levels</label>
+              <input type="text" class="ads-text-input" id="ads-banner-level-range" value="5-20, 40+" placeholder="e.g. 5-20, 40+">
+            </div>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview" id="ads-preview-banner">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="ads-mock-hud"><span>♥ 5</span><span>Lv 12</span><span>🪙 2,480</span></div>
+                  <div class="ads-mock-game">Gameplay</div>
+                  <div class="ads-banner-mock" data-pos="bottom">Banner ad</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: INTERSTITIAL -->
+          <div class="ads-card ads-card--inter">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Interstitial</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" class="ads-enable" data-f="interstitial" checked>
+                <span>Enabled</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">Placements</div>
+            <div class="ads-check-grid" data-group="interPlacements">
+              <label class="ads-check"><input type="checkbox" data-p="app_start"><span>App start</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="level_start"><span>Level start</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="level_finish" checked><span>Level finish</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="level_lose" checked><span>Level lose</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="level_win"><span>Level win</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="during_level"><span>During level</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="main_menu"><span>Main menu</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="shop"><span>Shop</span></label>
+              <label class="ads-check ads-check--custom"><input type="checkbox" data-p="custom"><span>✨ Custom</span></label>
+            </div>
+            <div class="iap-custom-input" id="ads-inter-custom-input" data-prompt="Show after the player closes the daily-reward popup, but skip if a session has lasted under 60 seconds."></div>
+
+            <div class="ads-block-title">Cadence</div>
+            <div class="ads-cadence">
+              <label class="ads-radio"><input type="radio" name="interCadence" value="levels" checked><span>Every</span></label>
+              <input type="number" class="ads-num-input" id="ads-cadence-levels" min="1" max="20" value="2">
+              <span class="ads-cadence-unit">levels</span>
+            </div>
+            <div class="ads-cadence">
+              <label class="ads-radio"><input type="radio" name="interCadence" value="minutes"><span>Every</span></label>
+              <input type="number" class="ads-num-input" id="ads-cadence-minutes" min="1" max="30" value="2">
+              <span class="ads-cadence-unit">minutes</span>
+            </div>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview" id="ads-preview-inter">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="ads-inter-mock">
+                    <div class="ads-inter-x">×</div>
+                    <div class="ads-inter-title">AD</div>
+                    <div class="ads-inter-body">Install now</div>
+                    <div class="ads-inter-cta">OPEN</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ads-preview-caption" id="ads-inter-caption">Fires on: Level finish, Level lose · every 2 levels</div>
+            </div>
+          </div>
+
+          <!-- CARD 3: REWARDED VIDEO -->
+          <div class="ads-card ads-card--rv">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Rewarded video</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" class="ads-enable" data-f="rewarded" checked>
+                <span>Enabled</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">Placements</div>
+            <div class="ads-check-grid" data-group="rvPlacements">
+              <label class="ads-check"><input type="checkbox" data-p="daily_reward" checked><span>Daily reward</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="double_level" checked><span>Double level reward</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="double_levelup"><span>Double level-up reward</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="shop_reroll"><span>Shop reroll</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="coins_diamonds"><span>Coins → Diamonds</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="placement_boost"><span>Placement level boost</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="lives_refresh" checked><span>Lives refresh</span></label>
+              <label class="ads-check"><input type="checkbox" data-p="spin_wheel"><span>Spin the wheel</span></label>
+              <label class="ads-check ads-check--custom"><input type="checkbox" data-p="custom"><span>✨ Custom</span></label>
+            </div>
+            <div class="iap-custom-input" id="ads-rv-custom-input" data-prompt="Offer a watch-ad to revive once after a level loss on level 5+, capped at 2 revives per session."></div>
+
+            <div class="ads-block-title">Behavior</div>
+            <label class="ads-check ads-check--wide">
+              <input type="checkbox" id="ads-rv-pauses" checked>
+              <span>RV pauses interstitials (per session)</span>
+            </label>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview" id="ads-preview-rv">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="ads-rv-mock">
+                    <div class="ads-rv-icon">▶</div>
+                    <div class="ads-rv-title" id="ads-rv-title">Watch ad</div>
+                    <div class="ads-rv-reward">+2x reward</div>
+                    <div class="ads-rv-cta">WATCH</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTIMATE PANEL -->
+        <div class="ads-estimate">
+          <div class="ads-estimate-head">
+            <div class="ads-estimate-title-row">
+              <span class="ads-estimate-title">Revenue estimate</span>
+              <div class="ads-dau-row">
+                <span class="ads-dau-label">DAU</span>
+                <div class="ads-dau-chips" id="ads-dau-chips" role="tablist">
+                  <button class="ads-dau-chip active" data-dau="50000">50k</button>
+                  <button class="ads-dau-chip" data-dau="100000">100k</button>
+                  <button class="ads-dau-chip" data-dau="215000">215k</button>
+                  <button class="ads-dau-chip" data-dau="custom">Custom</button>
+                </div>
+                <input type="number" class="ads-dau-custom" id="ads-dau-custom" min="1000" step="1000" placeholder="DAU" hidden>
+              </div>
+            </div>
+
+            <div class="mon-stats ads-estimate-stats">
+              <div class="mon-stat"><span class="mon-stat-val" id="ads-est-impr">—</span><span class="mon-stat-lbl">Imp / DAU</span></div>
+              <div class="mon-stat"><span class="mon-stat-val" id="ads-est-ecpm">—</span><span class="mon-stat-lbl">Blended eCPM</span></div>
+              <div class="mon-stat"><span class="mon-stat-val" id="ads-est-arpdau">—</span><span class="mon-stat-lbl">ARPU</span></div>
+            </div>
+
+            <div class="ads-estimate-toolbar">
+              <div class="ads-metric-tabs" role="tablist">
+                <button class="ads-metric-tab active" data-metric="imp_per_dau" role="tab" aria-selected="true">Imp / DAU</button>
+                <button class="ads-metric-tab" data-metric="ecpm" role="tab" aria-selected="false">eCPM</button>
+                <button class="ads-metric-tab" data-metric="arpu" role="tab" aria-selected="false">ARPU</button>
+              </div>
+              <div class="ads-estimate-legend" id="ads-estimate-legend"></div>
+            </div>
+          </div>
+
+          <div class="ads-estimate-plot et-chart-plot">
+            <div class="et-chart-ylabels" data-ylabels></div>
+            <svg class="et-chart" id="ads-estimate-chart" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="ads-est-grad-banner" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#00a1e1" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="ads-est-grad-inter" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="ads-est-grad-rv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.32"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <g class="et-chart-grid"></g>
+              <g class="ads-est-series"></g>
+              <g class="ads-est-hover">
+                <line class="ads-est-crosshair" x1="0" y1="10" x2="0" y2="202" stroke="rgba(22,27,37,0.35)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>
+                <g class="ads-est-dots"></g>
+              </g>
+              <g class="et-chart-xaxis"></g>
+              <g class="et-chart-yaxis"></g>
+            </svg>
+            <div class="et-chart-xlabels" data-xlabels></div>
+            <div class="ads-est-tooltip" id="ads-est-tooltip" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ============ IAPS PANEL ============ -->
+      <div class="mon-panel" data-mpanel="iaps">
+        <div class="iap-configurator">
+
+          <!-- CARD 1: SHOP / SKUs -->
+          <div class="ads-card iap-card iap-card--shop">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Shop</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" checked disabled>
+                <span>Always on</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">SKUs</div>
+            <div class="mon-sku-table" id="mon-sku-table">
+              <div class="mon-sku-head">
+                <span>Price</span>
+                <span>Contents</span>
+                <span>Feat.</span>
+                <span></span>
+              </div>
+              <!-- rows injected by JS -->
+            </div>
+            <button class="mon-sku-add" id="mon-sku-add" type="button">+ Add SKU</button>
+            <button class="mon-sku-add mon-sku-add--custom" id="mon-sku-add-custom" type="button">✨ Describe custom SKU</button>
+            <div class="iap-custom-input" id="mon-sku-custom-input" data-prompt="Founder Pack — $19.99: 1,000 gems, an exclusive avatar frame, and a permanent +10% coin boost."></div>
+
+            <div class="ads-block-title">Anchor price</div>
+            <div class="ads-radio-group" data-group="anchorPrice">
+              <label class="ads-radio"><input type="radio" name="anchorPrice" value="cheapest"><span>Cheapest pack</span></label>
+              <label class="ads-radio"><input type="radio" name="anchorPrice" value="featured" checked><span>Featured pack</span></label>
+              <label class="ads-radio"><input type="radio" name="anchorPrice" value="expensive"><span>Most expensive</span></label>
+            </div>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview iap-preview" id="iap-preview-shop">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="ads-mock-hud"><span>💎 48</span><span>Shop</span><span>🪙 2,480</span></div>
+                  <div class="iap-shop-grid" id="iap-shop-grid"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CARD 2: STARTER PACK -->
+          <div class="ads-card iap-card iap-card--starter">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Starter pack</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" class="iap-enable" data-f="starter" checked>
+                <span>Enabled</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">Discount</div>
+            <div class="iap-slider-row">
+              <input type="range" class="mon-slider" data-i="starterDiscount" min="0" max="80" step="5" value="40">
+              <span class="iap-slider-val"><span data-iv="starterDiscount">40</span>%</span>
+            </div>
+
+            <div class="ads-block-title">Trigger</div>
+            <div class="ads-radio-group" data-group="starterTrigger">
+              <label class="ads-radio"><input type="radio" name="starterTrigger" value="first_launch"><span>First launch</span></label>
+              <label class="ads-radio"><input type="radio" name="starterTrigger" value="session3" checked><span>After session 3</span></label>
+              <label class="ads-radio"><input type="radio" name="starterTrigger" value="first_loss"><span>After first loss</span></label>
+              <label class="ads-radio ads-radio--custom"><input type="radio" name="starterTrigger" value="custom"><span>✨ Custom</span></label>
+            </div>
+            <div class="iap-custom-input" id="iap-starter-custom-input" data-prompt="Trigger after the player misses 3 levels in a row, paired with a free booster."></div>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview iap-preview" id="iap-preview-starter">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="iap-starter-mock">
+                    <div class="iap-starter-badge">BEST VALUE</div>
+                    <div class="iap-starter-title">STARTER PACK</div>
+                    <div class="iap-starter-contents">
+                      <span>🪙 2,500</span>
+                      <span>💎 50</span>
+                      <span>⚡ ×3</span>
+                    </div>
+                    <div class="iap-starter-price-row">
+                      <span class="iap-starter-orig" id="iap-starter-orig">$9.99</span>
+                      <span class="iap-starter-now"  id="iap-starter-now">$5.99</span>
+                    </div>
+                    <div class="iap-starter-cta">CLAIM OFFER</div>
+                    <div class="iap-starter-timer">⏱ 23:47:12</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ads-preview-caption" id="iap-starter-caption">Triggers after session 3 · 40% off</div>
+            </div>
+          </div>
+
+          <!-- CARD 3: LIMITED-TIME OFFER -->
+          <div class="ads-card iap-card iap-card--offer">
+            <div class="ads-card-head">
+              <span class="ads-card-title">Limited-time offer</span>
+              <label class="ads-card-enable">
+                <input type="checkbox" class="iap-enable" data-f="offer" checked>
+                <span>Enabled</span>
+              </label>
+            </div>
+
+            <div class="ads-block-title">Cadence</div>
+            <div class="iap-slider-row">
+              <input type="range" class="mon-slider" data-i="offerCooldown" min="12" max="168" step="6" value="48">
+              <span class="iap-slider-val">Every <span data-iv="offerCooldown">48</span>h</span>
+            </div>
+
+            <div class="ads-block-title">Bundle rotation</div>
+            <div class="ads-check-grid" data-group="offerTypes">
+              <label class="ads-check"><input type="checkbox" data-o="coin_gem" checked><span>Coins + Gems</span></label>
+              <label class="ads-check"><input type="checkbox" data-o="booster" checked><span>Booster pack</span></label>
+              <label class="ads-check"><input type="checkbox" data-o="cosmetic"><span>Cosmetic</span></label>
+              <label class="ads-check"><input type="checkbox" data-o="whale"><span>Whale bundle</span></label>
+              <label class="ads-check ads-check--custom"><input type="checkbox" data-o="custom"><span>✨ Custom</span></label>
+            </div>
+            <div class="iap-custom-input" id="iap-offer-custom-input" data-prompt="Mystery weekend bundle — $4.99: a random rare cosmetic plus 50 gems, only Sat–Sun."></div>
+
+            <div class="ads-preview-wrap">
+              <div class="phone-frame ads-preview iap-preview" id="iap-preview-offer">
+                <div class="phone-notch"></div>
+                <div class="phone-screen ads-phone-screen">
+                  <div class="iap-offer-mock">
+                    <div class="iap-offer-header" id="iap-offer-header">FLASH DEAL</div>
+                    <div class="iap-offer-icon" id="iap-offer-icon">🪙💎</div>
+                    <div class="iap-offer-body" id="iap-offer-body">Coins + Gems bundle</div>
+                    <div class="iap-offer-anchor">
+                      <span class="iap-offer-old" id="iap-offer-old">$14.99</span>
+                      <span class="iap-offer-bonus" id="iap-offer-bonus">+120%</span>
+                    </div>
+                    <div class="iap-offer-cta">BUY $6.99</div>
+                    <div class="iap-offer-timer" id="iap-offer-timer">⏱ 04:32:08</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ads-preview-caption" id="iap-offer-caption">Every 48h · 2 bundle types in rotation</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ESTIMATE PANEL -->
+        <div class="ads-estimate iap-estimate">
+          <div class="ads-estimate-head">
+            <div class="ads-estimate-title-row">
+              <span class="ads-estimate-title">Revenue estimate</span>
+              <div class="ads-dau-row">
+                <span class="ads-dau-label">DAU</span>
+                <div class="ads-dau-chips" id="iap-dau-chips" role="tablist">
+                  <button class="ads-dau-chip active" data-dau="50000">50k</button>
+                  <button class="ads-dau-chip" data-dau="100000">100k</button>
+                  <button class="ads-dau-chip" data-dau="215000">215k</button>
+                  <button class="ads-dau-chip" data-dau="custom">Custom</button>
+                </div>
+                <input type="number" class="ads-dau-custom" id="iap-dau-custom" min="1000" step="1000" placeholder="DAU" hidden>
+              </div>
+            </div>
+
+            <div class="mon-stats ads-estimate-stats">
+              <div class="mon-stat"><span class="mon-stat-val" id="mon-iap-payer">—</span><span class="mon-stat-lbl">Paying users</span></div>
+              <div class="mon-stat"><span class="mon-stat-val" id="mon-iap-atv">—</span><span class="mon-stat-lbl">Avg. transaction</span></div>
+              <div class="mon-stat"><span class="mon-stat-val" id="mon-iap-arpdau">—</span><span class="mon-stat-lbl">IAP ARPDAU</span></div>
+            </div>
+
+            <div class="ads-estimate-toolbar">
+              <div class="ads-metric-tabs" id="iap-metric-tabs" role="tablist">
+                <button class="ads-metric-tab active" data-metric="funnel" role="tab" aria-selected="true">Funnel</button>
+                <button class="ads-metric-tab" data-metric="revenue_by_sku" role="tab" aria-selected="false">Revenue / SKU</button>
+                <button class="ads-metric-tab" data-metric="arpdau_vs_dau" role="tab" aria-selected="false">Revenue vs DAU</button>
+                <button class="ads-metric-tab" data-metric="conv_d30" role="tab" aria-selected="false">Conversion · D30</button>
+                <button class="ads-metric-tab" data-metric="arpu_d30" role="tab" aria-selected="false">ARPU · D30</button>
+              </div>
+              <div class="ads-estimate-legend" id="iap-estimate-legend"></div>
+            </div>
+          </div>
+
+          <div class="ads-estimate-plot et-chart-plot">
+            <div class="iap-funnel-html" id="iap-funnel-html" hidden></div>
+            <div class="et-chart-ylabels" data-ylabels></div>
+            <svg class="et-chart" id="iap-estimate-chart" viewBox="0 0 600 220" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="iap-est-grad-funnel" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#00a1e1" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="iap-est-grad-sku" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.42"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.06"/>
+                </linearGradient>
+                <linearGradient id="iap-est-grad-feat" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.55"/>
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.08"/>
+                </linearGradient>
+                <linearGradient id="iap-est-grad-dau" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.36"/>
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="iap-est-grad-conv" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.32"/>
+                  <stop offset="100%" stop-color="#00a1e1" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="iap-est-grad-arpu" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.32"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <g class="et-chart-grid"></g>
+              <g class="iap-est-series"></g>
+              <g class="iap-est-hover">
+                <line class="iap-est-crosshair" x1="0" y1="10" x2="0" y2="202" stroke="rgba(22,27,37,0.35)" stroke-width="1" stroke-dasharray="3,3" style="display:none"/>
+                <g class="iap-est-dots"></g>
+              </g>
+              <g class="et-chart-xaxis"></g>
+              <g class="et-chart-yaxis"></g>
+            </svg>
+            <div class="et-chart-xlabels" data-xlabels></div>
+            <div class="ads-est-tooltip" id="iap-est-tooltip" style="display:none"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: NEW HORIZONS -->
+    <section class="step-view" data-step="5">
+      <div class="step-eyebrow">Step 5</div>
+      <h2 class="step-heading">New Horizons</h2>
+      <p class="step-lede">Ship once. <span class="step-lede-accent">Then the platform compounds — every title becomes a laboratory, every event becomes a template, every player's tastes become shared intelligence.</span></p>
+
+      <div class="horizon-configurator">
+
+        <!-- CARD 1: DYNAMIC A/B TESTING -->
+        <div class="ads-card horizon-card horizon-card--ab">
+          <div class="ads-card-head">
+            <span class="ads-card-title">Dynamic A/B Testing</span>
+            <span class="horizon-badge">horizon</span>
+          </div>
+          <div class="horizon-sub">Auto-generate, auto-evaluate, auto-promote.</div>
+
+          <div class="horizon-ab-chart">
+            <svg viewBox="0 0 240 110" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="horizon-ab-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#00a1e1" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <!-- gridlines -->
+              <line x1="10" y1="20" x2="230" y2="20" stroke="rgba(22,27,37,0.08)" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"/>
+              <line x1="10" y1="55" x2="230" y2="55" stroke="rgba(22,27,37,0.08)" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"/>
+              <line x1="10" y1="90" x2="230" y2="90" stroke="rgba(22,27,37,0.2)" vector-effect="non-scaling-stroke"/>
+              <!-- Decision moment -->
+              <line x1="148" y1="15" x2="148" y2="90" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" vector-effect="non-scaling-stroke"/>
+              <text x="149" y="14" font-size="8" font-weight="700" fill="#d97706" font-family="var(--font)">significance</text>
+              <!-- Variant A (gray, loses) -->
+              <path d="M 10 70 L 30 68 L 50 65 L 70 63 L 90 62 L 110 61 L 130 61 L 150 61 L 170 61 L 190 62 L 210 62 L 230 63" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              <!-- Variant B area + line (wins) -->
+              <path d="M 10 72 L 30 66 L 50 58 L 70 50 L 90 43 L 110 37 L 130 32 L 150 28 L 170 25 L 190 23 L 210 22 L 230 21 L 230 90 L 10 90 Z" fill="url(#horizon-ab-grad)" stroke="none"/>
+              <path d="M 10 72 L 30 66 L 50 58 L 70 50 L 90 43 L 110 37 L 130 32 L 150 28 L 170 25 L 190 23 L 210 22 L 230 21" fill="none" stroke="#00a1e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              <!-- Winner dot + star -->
+              <circle cx="230" cy="21" r="4" fill="#00a1e1" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>
+              <text x="216" y="14" font-size="9" font-weight="700" fill="#00a1e1" font-family="var(--font)">★ Promoted</text>
+              <!-- Variant A end dot -->
+              <circle cx="230" cy="63" r="3" fill="#94a3b8" stroke="#fff" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+            </svg>
+            <div class="horizon-ab-legend">
+              <span><i style="background:#00a1e1"></i>Variant B</span>
+              <span><i style="background:#94a3b8"></i>Variant A</span>
+            </div>
+          </div>
+
+          <div class="mon-stats horizon-mini-stats">
+            <div class="mon-stat"><span class="mon-stat-val">42</span><span class="mon-stat-lbl">Tests / week</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">6d</span><span class="mon-stat-lbl">Avg decision</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">83%</span><span class="mon-stat-lbl">Auto-promoted</span></div>
+          </div>
+        </div>
+
+        <!-- CARD 2: LIVEOPS PLATFORM -->
+        <div class="ads-card horizon-card horizon-card--liveops">
+          <div class="ads-card-head">
+            <span class="ads-card-title">LiveOps Platform</span>
+            <span class="horizon-badge">horizon</span>
+          </div>
+          <div class="horizon-sub">One console. Every title. A live calendar.</div>
+
+          <div class="horizon-liveops-cal" aria-hidden="true">
+            <div class="horizon-cal-head">
+              <span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span>
+            </div>
+            <div class="horizon-cal-grid">
+              <!-- 4 weeks, 7 cols -->
+              <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
+              <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
+              <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
+              <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
+              <!-- Event pills overlaid via grid-column spans -->
+              <div class="horizon-cal-pill horizon-cal-pill--quest"   style="grid-row:1; grid-column:1 / span 2;">Daily quest<span class="horizon-cal-tag">G2</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--sale"    style="grid-row:1; grid-column:3 / span 5;">Halloween sale<span class="horizon-cal-tag">G1</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--collect" style="grid-row:2; grid-column:1 / span 3;">Pumpkin set<span class="horizon-cal-tag">G3</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--clan"    style="grid-row:2; grid-column:4 / span 2;">Clan war<span class="horizon-cal-tag">G1</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--boost"   style="grid-row:2; grid-column:6 / span 2;">Weekend 2×<span class="horizon-cal-tag">G2</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--tourney" style="grid-row:3; grid-column:1 / span 4;">Tournament<span class="horizon-cal-tag">G3</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--streak"  style="grid-row:3; grid-column:5 / span 3;">Login streak<span class="horizon-cal-tag">G2</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--gift"    style="grid-row:4; grid-column:2 / span 3;">Return gift<span class="horizon-cal-tag">G1</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--bundle"  style="grid-row:4; grid-column:6 / span 2;">Whale bundle<span class="horizon-cal-tag">G2</span></div>
+            </div>
+          </div>
+
+          <div class="mon-stats horizon-mini-stats">
+            <div class="mon-stat"><span class="mon-stat-val">1</span><span class="mon-stat-lbl">Console</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">12</span><span class="mon-stat-lbl">Titles live</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">24/7</span><span class="mon-stat-lbl">Scheduled</span></div>
+          </div>
+        </div>
+
+        <!-- CARD 3: TEMPLATED EVENTS -->
+        <div class="ads-card horizon-card horizon-card--events">
+          <div class="ads-card-head">
+            <span class="ads-card-title">Templated Events</span>
+            <span class="horizon-badge">horizon</span>
+          </div>
+          <div class="horizon-sub">Drop-in mechanics from a shared library.</div>
+
+          <div class="horizon-event-grid">
+            <div class="horizon-event-tile horizon-event-tile--on">
+              <div class="horizon-event-icon">🎁</div>
+              <div class="horizon-event-name">Daily reward</div>
+              <div class="horizon-event-meta">in 9 games</div>
+            </div>
+            <div class="horizon-event-tile">
+              <div class="horizon-event-icon">🎡</div>
+              <div class="horizon-event-name">Wheel of fortune</div>
+              <div class="horizon-event-meta">in 7 games</div>
+            </div>
+            <div class="horizon-event-tile">
+              <div class="horizon-event-icon">🏆</div>
+              <div class="horizon-event-name">Battle pass</div>
+              <div class="horizon-event-meta">in 5 games</div>
+            </div>
+            <div class="horizon-event-tile">
+              <div class="horizon-event-icon">🪜</div>
+              <div class="horizon-event-name">Gift ladder</div>
+              <div class="horizon-event-meta">in 6 games</div>
+            </div>
+            <div class="horizon-event-tile">
+              <div class="horizon-event-icon">🐷</div>
+              <div class="horizon-event-name">Piggy bank</div>
+              <div class="horizon-event-meta">in 8 games</div>
+            </div>
+            <div class="horizon-event-tile">
+              <div class="horizon-event-icon">📅</div>
+              <div class="horizon-event-name">Calendar</div>
+              <div class="horizon-event-meta">in 11 games</div>
+            </div>
+            <div class="horizon-event-tile horizon-event-tile--custom" id="horizon-event-custom">
+              <div class="horizon-event-custom-head">
+                <span class="horizon-event-icon">✨</span>
+                <span class="horizon-event-name">Custom</span>
+                <span class="horizon-event-meta">describe your own</span>
+              </div>
+              <div class="horizon-custom-input" data-prompt="Treasure-map event: 7-day hunt, rare-skin payout on day 7, leaderboard for top 100."></div>
+            </div>
+          </div>
+
+          <div class="mon-stats horizon-mini-stats">
+            <div class="mon-stat"><span class="mon-stat-val">18</span><span class="mon-stat-lbl">Templates</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">1-click</span><span class="mon-stat-lbl">Slot-in</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">80%</span><span class="mon-stat-lbl">Less work</span></div>
+          </div>
+        </div>
+
+        <!-- CARD 4: LIVE ECONOMY TUNING -->
+        <div class="ads-card horizon-card horizon-card--economy">
+          <div class="ads-card-head">
+            <span class="ads-card-title">Live Economy Tuning</span>
+            <span class="horizon-badge">horizon</span>
+          </div>
+          <div class="horizon-sub">Telemetry in. Rebalanced curves out.</div>
+
+          <div class="horizon-economy-chart">
+            <svg viewBox="0 0 260 110" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="horizon-econ-grad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.28"/>
+                  <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <!-- gridlines -->
+              <line x1="10" y1="22" x2="250" y2="22" stroke="rgba(22,27,37,0.08)" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"/>
+              <line x1="10" y1="55" x2="250" y2="55" stroke="rgba(22,27,37,0.08)" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"/>
+              <line x1="10" y1="88" x2="250" y2="88" stroke="rgba(22,27,37,0.2)" vector-effect="non-scaling-stroke"/>
+              <!-- Before: wallet over-drains, hits zero around the middle -->
+              <path d="M 10 40 L 40 48 L 70 58 L 100 72 L 130 84 L 160 88 L 190 88 L 220 88 L 250 88" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round" opacity="0.65" vector-effect="non-scaling-stroke"/>
+              <!-- Auto-tune moment marker -->
+              <line x1="100" y1="18" x2="100" y2="88" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,3" vector-effect="non-scaling-stroke"/>
+              <text x="103" y="15" font-size="8" font-weight="700" fill="#7c3aed" font-family="var(--font)">↻ auto-tuned</text>
+              <!-- After: balanced wallet -->
+              <path d="M 10 40 L 40 42 L 70 48 L 100 52 L 130 48 L 160 45 L 190 42 L 220 40 L 250 38 L 250 88 L 10 88 Z" fill="url(#horizon-econ-grad)" stroke="none"/>
+              <path d="M 10 40 L 40 42 L 70 48 L 100 52 L 130 48 L 160 45 L 190 42 L 220 40 L 250 38" fill="none" stroke="#8b5cf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+              <!-- End dot on after curve -->
+              <circle cx="250" cy="38" r="3.5" fill="#8b5cf6" stroke="#fff" stroke-width="1.8" vector-effect="non-scaling-stroke"/>
+              <!-- End dot on before curve (ghost) -->
+              <circle cx="250" cy="88" r="2.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" opacity="0.6" vector-effect="non-scaling-stroke"/>
+              <!-- Y axis labels -->
+              <text x="8" y="24" font-size="7" fill="#94a3b8" font-family="var(--font)" text-anchor="end">full</text>
+              <text x="8" y="90" font-size="7" fill="#94a3b8" font-family="var(--font)" text-anchor="end">dry</text>
+            </svg>
+            <div class="horizon-economy-legend">
+              <span><i style="background:#8b5cf6"></i>After tune</span>
+              <span><i style="background:#ef4444;opacity:0.65"></i>Before</span>
+              <span class="horizon-economy-axis">Lv 1 → 50</span>
+            </div>
+          </div>
+
+          <div class="mon-stats horizon-mini-stats">
+            <div class="mon-stat"><span class="mon-stat-val">24h</span><span class="mon-stat-lbl">Telemetry loop</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">Auto</span><span class="mon-stat-lbl">Re-tune</span></div>
+            <div class="mon-stat"><span class="mon-stat-val">−18%</span><span class="mon-stat-lbl">Early-dry churn</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- How-it-works row — one note per card column -->
+      <div class="horizon-notes-row">
+        <div class="horizon-card--ab">
+          <div class="horizon-note">
+            <div class="horizon-note-eyebrow">How it works</div>
+            <p>Every tweak ships as an experiment. The engine picks variants, allocates traffic, watches for significance, and promotes the winner on its own — no analyst in the loop, no stall between idea and impact. Losing variants roll back automatically, and every decision is logged back into the model so future experiments run smarter.</p>
+          </div>
+        </div>
+        <div class="horizon-card--liveops">
+          <div class="horizon-note">
+            <div class="horizon-note-eyebrow">How it works</div>
+            <p>One console schedules sales, tournaments, bundles, and returns across every title. Swap a holiday theme once and it propagates. Pause a misbehaving event with one click. No deploy, no downtime — and every scheduled beat is visible on a single calendar spanning the whole portfolio.</p>
+          </div>
+        </div>
+        <div class="horizon-card--events">
+          <div class="horizon-note">
+            <div class="horizon-note-eyebrow">How it works</div>
+            <p>Every mechanic — wheel, pass, ladder, piggy — is a reusable template, not a hand-built one-off. Drop one into a new game, reskin it, schedule it. Write once, ship everywhere. New variants get published back to the shared library so every title benefits the moment a design lands.</p>
+          </div>
+        </div>
+        <div class="horizon-card--economy">
+          <div class="horizon-note">
+            <div class="horizon-note-eyebrow">How it works</div>
+            <p>Wallet, faucet, and sink telemetry streams back into the engine in real time. When players run dry too early or hoard too long, new curves are proposed, simulated against live data, and rolled out behind a flag — no patch, no release window.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <script src="app.js"></script>
