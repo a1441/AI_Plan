@@ -38,6 +38,52 @@ initCardBtn('refine-prompt-btn', 'refine-prompt-expand', 'Add prompt', 'Hide pro
 initCardBtn('engine-methodology-btn', 'engine-methodology-expand', 'Methodology', 'Hide');
 initCardBtn('engine-prompt-btn',      'engine-prompt-expand',      'Add prompt',  'Hide prompt');
 
+// ── Core-loop prompt cards: type out the prompt text when expanded ─────────
+['prompt-expand', 'refine-prompt-expand', 'engine-prompt-expand'].forEach(id => {
+  const expand = document.getElementById(id);
+  if (!expand) return;
+  const target = expand.querySelector('.card-expand-text');
+  if (!target) return;
+  target.dataset.full = target.textContent.trim();
+  target.textContent = '';
+  const observer = new MutationObserver(() => {
+    if (expand.classList.contains('open')) typeCorePrompt(target);
+  });
+  observer.observe(expand, { attributes: true, attributeFilter: ['class'] });
+});
+
+function typeCorePrompt(el) {
+  const text = el.dataset.full || '';
+  const token = String(Date.now()) + Math.random();
+  el.dataset.token = token;
+  el.textContent = '';
+  el.classList.add('is-typing');
+
+  // Hide everything that appears after the prompt text until typing finishes.
+  const followers = [];
+  let sib = el.nextElementSibling;
+  while (sib) { followers.push(sib); sib = sib.nextElementSibling; }
+  followers.forEach(f => { f.classList.remove('is-revealed'); f.classList.add('is-pending'); });
+
+  let i = 0;
+  const tick = () => {
+    if (el.dataset.token !== token) return;
+    el.textContent = text.slice(0, ++i);
+    if (i < text.length) setTimeout(tick, 12);
+    else {
+      el.classList.remove('is-typing');
+      followers.forEach((f, idx) => {
+        setTimeout(() => {
+          if (el.dataset.token !== token) return;
+          f.classList.remove('is-pending');
+          f.classList.add('is-revealed');
+        }, 60 * idx);
+      });
+    }
+  };
+  tick();
+}
+
 // ── Web Prototype — show prototype button ─────────────────────
 const showProtoBtn = document.getElementById('show-proto-btn');
 const protoExpand  = document.getElementById('proto-expand');
@@ -3640,13 +3686,15 @@ if (rvCustomCb && rvCustomInput) {
   });
 }
 
-// Step 3 economy — custom currencies / boosters / faucets / tuning
+// Step 3 economy + Step 5 horizon — custom describe rows (toggle + type prompt)
 document.querySelectorAll('.econ-custom-add').forEach(btn => {
   const input = document.getElementById(btn.dataset.target);
   if (!input) return;
+  const horizonCard = btn.closest('.horizon-card');
   btn.addEventListener('click', () => {
     const open = input.classList.toggle('is-open');
     btn.classList.toggle('is-active', open);
+    if (horizonCard) horizonCard.classList.toggle('has-custom', open);
     if (open) typeIapPrompt(input);
     else closeIapPrompt(input);
   });

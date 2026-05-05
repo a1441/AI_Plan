@@ -1203,7 +1203,7 @@
           <div class="horizon-sub">Auto-generate, auto-evaluate, auto-promote.</div>
 
           <div class="horizon-ab-chart">
-            <svg viewBox="0 0 240 110" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 -55 240 170" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="horizon-ab-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#00a1e1" stop-opacity="0.28"/>
@@ -1215,8 +1215,8 @@
               <line x1="10" y1="55" x2="230" y2="55" stroke="rgba(22,27,37,0.08)" stroke-dasharray="3,4" vector-effect="non-scaling-stroke"/>
               <line x1="10" y1="90" x2="230" y2="90" stroke="rgba(22,27,37,0.2)" vector-effect="non-scaling-stroke"/>
               <!-- Decision moment -->
-              <line x1="148" y1="15" x2="148" y2="90" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" vector-effect="non-scaling-stroke"/>
-              <text x="149" y="14" font-size="8" font-weight="700" fill="#d97706" font-family="var(--font)">significance</text>
+              <line x1="148" y1="-42" x2="148" y2="90" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,3" vector-effect="non-scaling-stroke"/>
+              <text x="149" y="-44" font-size="8" font-weight="700" fill="#d97706" font-family="var(--font)">significance</text>
               <!-- Variant A (gray, loses) -->
               <path d="M 10 70 L 30 68 L 50 65 L 70 63 L 90 62 L 110 61 L 130 61 L 150 61 L 170 61 L 190 62 L 210 62 L 230 63" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
               <!-- Variant B area + line (wins) -->
@@ -1224,13 +1224,20 @@
               <path d="M 10 72 L 30 66 L 50 58 L 70 50 L 90 43 L 110 37 L 130 32 L 150 28 L 170 25 L 190 23 L 210 22 L 230 21" fill="none" stroke="#00a1e1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
               <!-- Winner dot + star -->
               <circle cx="230" cy="21" r="4" fill="#00a1e1" stroke="#fff" stroke-width="2" vector-effect="non-scaling-stroke"/>
-              <text x="216" y="14" font-size="9" font-weight="700" fill="#00a1e1" font-family="var(--font)">★ Promoted</text>
+              <text class="ab-promoted-label" x="216" y="14" font-size="9" font-weight="700" fill="#00a1e1" font-family="var(--font)">★ Promoted</text>
               <!-- Variant A end dot -->
               <circle cx="230" cy="63" r="3" fill="#94a3b8" stroke="#fff" stroke-width="1.5" vector-effect="non-scaling-stroke"/>
+              <!-- Variant C — appears only when a custom prompt is active -->
+              <g class="ab-variant-c">
+                <path d="M 10 74 L 30 64 L 50 52 L 70 40 L 90 28 L 110 16 L 130 6 L 150 -4 L 170 -12 L 190 -18 L 210 -22 L 230 -25" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3,3" vector-effect="non-scaling-stroke"/>
+                <circle cx="230" cy="-25" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.8" vector-effect="non-scaling-stroke"/>
+                <text x="14" y="-38" font-size="9" font-weight="700" fill="#10b981" font-family="var(--font)">★ Custom hypothesis +6.2%</text>
+              </g>
             </svg>
             <div class="horizon-ab-legend">
               <span><i style="background:#00a1e1"></i>Variant B</span>
               <span><i style="background:#94a3b8"></i>Variant A</span>
+              <span class="ab-variant-c-legend"><i style="background:#10b981"></i>Custom hypothesis</span>
             </div>
           </div>
 
@@ -1239,6 +1246,8 @@
             <div class="mon-stat"><span class="mon-stat-val">6d</span><span class="mon-stat-lbl">Avg decision</span></div>
             <div class="mon-stat"><span class="mon-stat-val">83%</span><span class="mon-stat-lbl">Auto-promoted</span></div>
           </div>
+          <button class="econ-custom-add" data-target="horizon-custom-ab" type="button">✨ Describe a custom A/B test</button>
+          <div class="iap-custom-input" id="horizon-custom-ab" data-prompt="Test 3 starter-pack discounts (30/40/50%) on day-1 churn risk segment, primary KPI = D7 retention."></div>
         </div>
 
         <!-- CARD 2: LIVEOPS PLATFORM -->
@@ -1259,6 +1268,17 @@
               <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
               <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
               <div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div><div class="horizon-cal-cell"></div>
+              <!-- Row 5: explicit-position cells so they share row 5 with the (positioned) custom pills -->
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:1;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:2;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:3;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:4;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:5;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:6;"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler" style="grid-row:5; grid-column:7;"></div>
+              <!-- Rows 6-7: persistent filler bricks -->
+              <div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div>
+              <div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div><div class="horizon-cal-cell horizon-cal-cell--filler"></div>
               <!-- Event pills overlaid via grid-column spans -->
               <div class="horizon-cal-pill horizon-cal-pill--quest"   style="grid-row:1; grid-column:1 / span 2;">Daily quest<span class="horizon-cal-tag">G2</span></div>
               <div class="horizon-cal-pill horizon-cal-pill--sale"    style="grid-row:1; grid-column:3 / span 5;">Halloween sale<span class="horizon-cal-tag">G1</span></div>
@@ -1269,6 +1289,8 @@
               <div class="horizon-cal-pill horizon-cal-pill--streak"  style="grid-row:3; grid-column:5 / span 3;">Login streak<span class="horizon-cal-tag">G2</span></div>
               <div class="horizon-cal-pill horizon-cal-pill--gift"    style="grid-row:4; grid-column:2 / span 3;">Return gift<span class="horizon-cal-tag">G1</span></div>
               <div class="horizon-cal-pill horizon-cal-pill--bundle"  style="grid-row:4; grid-column:6 / span 2;">Whale bundle<span class="horizon-cal-tag">G2</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--custom" style="grid-row:5; grid-column:1 / span 4;">✨ Double XP weekend<span class="horizon-cal-tag">G1+G3</span></div>
+              <div class="horizon-cal-pill horizon-cal-pill--custom" style="grid-row:5; grid-column:5 / span 3;">✨ Returning gift<span class="horizon-cal-tag">All</span></div>
             </div>
           </div>
 
@@ -1277,6 +1299,8 @@
             <div class="mon-stat"><span class="mon-stat-val">12</span><span class="mon-stat-lbl">Titles live</span></div>
             <div class="mon-stat"><span class="mon-stat-val">24/7</span><span class="mon-stat-lbl">Scheduled</span></div>
           </div>
+          <button class="econ-custom-add" data-target="horizon-custom-liveops" type="button">✨ Describe a custom LiveOps schedule</button>
+          <div class="iap-custom-input" id="horizon-custom-liveops" data-prompt="Run a 72-hour double-XP weekend in G1 + G3, paired with a returning-player gift on Sunday night."></div>
         </div>
 
         <!-- CARD 3: TEMPLATED EVENTS -->
@@ -1344,7 +1368,7 @@
           <div class="horizon-sub">Telemetry in. Rebalanced curves out.</div>
 
           <div class="horizon-economy-chart">
-            <svg viewBox="0 0 260 110" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="-20 -55 280 170" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="horizon-econ-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%" stop-color="#8b5cf6" stop-opacity="0.28"/>
@@ -1358,8 +1382,8 @@
               <!-- Before: wallet over-drains, hits zero around the middle -->
               <path d="M 10 40 L 40 48 L 70 58 L 100 72 L 130 84 L 160 88 L 190 88 L 220 88 L 250 88" fill="none" stroke="#ef4444" stroke-width="1.8" stroke-dasharray="4,3" stroke-linecap="round" opacity="0.65" vector-effect="non-scaling-stroke"/>
               <!-- Auto-tune moment marker -->
-              <line x1="100" y1="18" x2="100" y2="88" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,3" vector-effect="non-scaling-stroke"/>
-              <text x="103" y="15" font-size="8" font-weight="700" fill="#7c3aed" font-family="var(--font)">↻ auto-tuned</text>
+              <line x1="100" y1="-50" x2="100" y2="88" stroke="#8b5cf6" stroke-width="1.5" stroke-dasharray="3,3" vector-effect="non-scaling-stroke"/>
+              <text x="103" y="-52" font-size="8" font-weight="700" fill="#7c3aed" font-family="var(--font)">↻ auto-tuned</text>
               <!-- After: balanced wallet -->
               <path d="M 10 40 L 40 42 L 70 48 L 100 52 L 130 48 L 160 45 L 190 42 L 220 40 L 250 38 L 250 88 L 10 88 Z" fill="url(#horizon-econ-grad)" stroke="none"/>
               <path d="M 10 40 L 40 42 L 70 48 L 100 52 L 130 48 L 160 45 L 190 42 L 220 40 L 250 38" fill="none" stroke="#8b5cf6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
@@ -1367,6 +1391,12 @@
               <circle cx="250" cy="38" r="3.5" fill="#8b5cf6" stroke="#fff" stroke-width="1.8" vector-effect="non-scaling-stroke"/>
               <!-- End dot on before curve (ghost) -->
               <circle cx="250" cy="88" r="2.5" fill="#ef4444" stroke="#fff" stroke-width="1.5" opacity="0.6" vector-effect="non-scaling-stroke"/>
+              <!-- Custom-rule re-tune curve — appears when a custom prompt is active -->
+              <g class="econ-custom-curve">
+                <path d="M 10 40 L 40 32 L 70 22 L 100 10 L 130 -2 L 160 -12 L 190 -20 L 220 -25 L 250 -28" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="3,3" vector-effect="non-scaling-stroke"/>
+                <circle cx="250" cy="-28" r="3.5" fill="#10b981" stroke="#fff" stroke-width="1.8" vector-effect="non-scaling-stroke"/>
+                <text x="248" y="-38" font-size="9" font-weight="700" fill="#10b981" font-family="var(--font)" text-anchor="end">↻ custom rule</text>
+              </g>
               <!-- Y axis labels -->
               <text x="8" y="24" font-size="7" fill="#94a3b8" font-family="var(--font)" text-anchor="end">full</text>
               <text x="8" y="90" font-size="7" fill="#94a3b8" font-family="var(--font)" text-anchor="end">dry</text>
@@ -1374,6 +1404,7 @@
             <div class="horizon-economy-legend">
               <span><i style="background:#8b5cf6"></i>After tune</span>
               <span><i style="background:#ef4444;opacity:0.65"></i>Before</span>
+              <span class="econ-custom-curve-legend"><i style="background:#10b981"></i>Custom rule</span>
               <span class="horizon-economy-axis">Lv 1 → 50</span>
             </div>
           </div>
@@ -1383,6 +1414,8 @@
             <div class="mon-stat"><span class="mon-stat-val">Auto</span><span class="mon-stat-lbl">Re-tune</span></div>
             <div class="mon-stat"><span class="mon-stat-val">−18%</span><span class="mon-stat-lbl">Early-dry churn</span></div>
           </div>
+          <button class="econ-custom-add" data-target="horizon-custom-economy" type="button">✨ Describe a custom tuning rule</button>
+          <div class="iap-custom-input" id="horizon-custom-economy" data-prompt="If D3 retention drops &gt;5% week-over-week, soften checkpoint spikes by 20% until it recovers."></div>
         </div>
 
       </div>
